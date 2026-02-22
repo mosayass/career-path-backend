@@ -1,0 +1,42 @@
+services:
+  # The PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: careerpath-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: SuperSecretPassword123!
+      POSTGRES_DB: CareerPathDb
+    ports:
+      - "5432:5432" # Maps Docker port to your local machine for viewing data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ai_shared_network
+
+  # The .NET Backend API
+  api:
+    build:
+      context: .
+      dockerfile: Host/Dockerfile
+    container_name: careerpath-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # This points .NET directly to the 'db' container
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CareerPathDb;Username=postgres;Password=SuperSecretPassword123!
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - ai_shared_network
+
+# Permanent storage for the database
+volumes:
+  postgres_data:
+
+# The shared network that FastAPI will also connect to
+networks:
+  ai_shared_network:
+    name: ai_shared_network
+    driver: bridge

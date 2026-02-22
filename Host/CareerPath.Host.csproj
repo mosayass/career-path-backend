@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Identity\Api\CareerPath.Identity.Api.csproj" />
+    <ProjectReference Include="..\Modules\Identity\Infrastructure\CareerPath.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Assessment\Api\CareerPath.Assessment.Api.csproj" />
+    <ProjectReference Include="..\Modules\Assessment\Infrastructure\CareerPath.Assessment.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Community\Api\CareerPath.Community.Api.csproj" />
+    <ProjectReference Include="..\Modules\Community\Infrastructure\CareerPath.Community.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

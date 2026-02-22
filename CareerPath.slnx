@@ -1,0 +1,43 @@
+<Solution>
+  <Folder Name="/Host/">
+    <Project Path="Host/CareerPath.Host.csproj" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Assessment/" />
+  <Folder Name="/Modules/Assessment/Api/">
+    <Project Path="Modules/Assessment/Api/CareerPath.Assessment.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Assessment/Core/">
+    <Project Path="Modules/Assessment/Core/CareerPath.Assessment.Core.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Assessment/Infrastructure/">
+    <Project Path="Modules/Assessment/Infrastructure/CareerPath.Assessment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Community/" />
+  <Folder Name="/Modules/Community/Api/">
+    <Project Path="Modules/Community/Api/CareerPath.Community.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Community/Core/">
+    <Project Path="Modules/Community/Core/CareerPath.Community.Core.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Community/Infrastructure/">
+    <Project Path="Modules/Community/Infrastructure/CareerPath.Community.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Identity/" />
+  <Folder Name="/Modules/Identity/Api/">
+    <Project Path="Modules/Identity/Api/CareerPath.Identity.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Identity/Core/">
+    <Project Path="Modules/Identity/Core/CareerPath.Identity.Core.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Identity/Infrastructure/">
+    <Project Path="Modules/Identity/Infrastructure/CareerPath.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Shared/" />
+  <Folder Name="/Shared/IntegrationEvents/">
+    <Project Path="Shared/IntegrationEvents/CareerPath.Shared.IntegrationEvents.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+</Solution>
