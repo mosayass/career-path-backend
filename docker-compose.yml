@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: SuperSecretPassword123!
       POSTGRES_DB: CareerPathDb
     ports:
-      - "5432:5432" # Maps Docker port to your local machine for viewing data
+      - "5433:5432" # Maps Docker port to your local machine for viewing data
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:

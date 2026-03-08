@@ -33,7 +33,9 @@
   <Folder Name="/Modules/Identity/Infrastructure/">
     <Project Path="Modules/Identity/Infrastructure/CareerPath.Identity.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/Shared/" />
+  <Folder Name="/Shared/">
+    <Project Path="CareerPath.Shared/CareerPath.Shared.csproj" Id="1ff3086b-09c9-47b6-a1bc-a5a0eadf7108" />
+  </Folder>
   <Folder Name="/Shared/IntegrationEvents/">
     <Project Path="Shared/IntegrationEvents/CareerPath.Shared.IntegrationEvents.csproj" />
   </Folder>

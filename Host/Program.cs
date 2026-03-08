@@ -1,41 +1,56 @@
+using CareerPath.Identity.Core.Entities;
+using CareerPath.Identity.Infrastructure;
+using CareerPath.Identity.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// --- 1. REGISTRATION PHASE ---
+// Wire up the Identity module's infrastructure (Database, DI, Identity Core)
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+
+// Standard API services
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. EXECUTION PHASE (Data Seeding) ---
+// Create a temporary service scope to run our seeder exactly once on startup
+using (var scope = app.Services.CreateScope())
+{
+    var scopedProvider = scope.ServiceProvider;
+    try
+    {
+        // Request the required services from the DI Container
+        var userManager = scopedProvider.GetRequiredService<UserManager<User>>();
+        var roleManager = scopedProvider.GetRequiredService<RoleManager<Role>>();
+        var configuration = scopedProvider.GetRequiredService<IConfiguration>();
+
+        // Execute the seeding logic
+        await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration);
+    }
+    catch (Exception ex)
+    {
+        // Safely catch and log any seeding errors without crashing the whole app
+        var logger = scopedProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the Identity database.");
+    }
+}
+
+// --- HTTP PIPELINE ---
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Ensure ASP.NET Core knows to use routing and auth
+app.UseRouting();
+app.UseAuthentication(); // Must come before Authorization
+app.UseAuthorization();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
