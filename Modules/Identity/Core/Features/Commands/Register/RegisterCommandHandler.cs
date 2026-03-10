@@ -2,6 +2,7 @@
 using MediatR;
 using CareerPath.Identity.Core.Contracts;
 using CareerPath.Identity.Core.Entities;
+using CareerPath.Identity.Core.Enums;
 
 namespace CareerPath.Identity.Core.Features.Commands.Register;
 
@@ -41,8 +42,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
 
         //4.Save to PostgreSQL Database
         await _userRepository.AddAsync(newUser, cancellationToken);
-
+        await _userRepository.AssignRoleAsync(newUser, Roles.Student.ToString(), cancellationToken);
         //5.Return the successful response
-         return new RegisterResponseDto(newUser.Id, true, "Registration successful.");
+        return new RegisterResponseDto(newUser.Id, true, "Registration successful.");
     }
 }
