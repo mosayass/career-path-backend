@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\IntegrationEvents\CareerPath.Shared.IntegrationEvents.csproj" />
-    <ProjectReference Include="..\..\..\CareerPath.Shared\CareerPath.Shared.csproj" />
+    <ProjectReference Include="..\..\..\Shared\CareerPath.Shared\CareerPath.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.3" />

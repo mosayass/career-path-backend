@@ -2,6 +2,7 @@ using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using CareerPath.Identity.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,13 @@ builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Add Identity Module Dependencies
+builder.Services.AddIdentityCoreServices();
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+
+// Register Global Exception Handling
+builder.Services.AddExceptionHandler<CareerPath.Host.Middleware.GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -46,6 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
 // Ensure ASP.NET Core knows to use routing and auth
 app.UseRouting();
 app.UseAuthentication(); // Must come before Authorization

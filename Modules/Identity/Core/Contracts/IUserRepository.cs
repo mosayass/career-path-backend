@@ -12,4 +12,5 @@ public interface IUserRepository
     Task<Result> AddAsync(User user, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<Result> AssignRoleAsync(User user, string role, CancellationToken cancellationToken = default);
+    Task<Result> SaveVerificationTokenAsync(User user, string provider, string tokenName, string token, CancellationToken cancellationToken = default);
 }

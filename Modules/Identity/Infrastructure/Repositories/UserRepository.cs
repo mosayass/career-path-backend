@@ -63,4 +63,14 @@ public class UserRepository : IUserRepository
         // Therefore, this method can safely do nothing in this specific implementation.
         return Task.CompletedTask;
     }
+    public async Task<Result> SaveVerificationTokenAsync(User user, string provider, string tokenName, string token, CancellationToken cancellationToken = default)
+    {
+        // This natively saves the token to the AspNetUserTokens table linked to this user
+        var identityResult = await _userManager.SetAuthenticationTokenAsync(user, provider, tokenName, token);
+
+        if (!identityResult.Succeeded)
+            return Result.Failure("Failed to save verification token to the database.");
+
+        return Result.Success();
+    }
 }

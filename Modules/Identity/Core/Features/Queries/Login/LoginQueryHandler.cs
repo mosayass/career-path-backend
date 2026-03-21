@@ -1,39 +1,53 @@
-﻿using CareerPath.Identity.Core.DTOs;
+﻿using CareerPath.Identity.Core.Contracts;
+using CareerPath.Identity.Core.DTOs;
+using CareerPath.Shared.Responses;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CareerPath.Identity.Core.Features.Queries.Login;
 
-public class LoginQueryHandler : IRequestHandler<LoginQuery, LoginResponseDto>
+public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginResponseDto>>
 {
-    // Dependencies like IUserRepository, IPasswordHasher, and IJwtProvider will be injected here later
+    private readonly IUserRepository _userRepository;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IJwtProvider _jwtProvider;
 
-    public LoginQueryHandler()
+    public LoginQueryHandler(
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher,
+        IJwtProvider jwtProvider)
     {
+        _userRepository = userRepository;
+        _passwordHasher = passwordHasher;
+        _jwtProvider = jwtProvider;
     }
 
-    public async Task<LoginResponseDto> Handle(LoginQuery request, CancellationToken cancellationToken)
+    public async Task<Result<LoginResponseDto>> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        var dto = request.RequestDto;
+        // 1. Find the user by email
+        var user = await _userRepository.GetByEmailAsync(request.RequestDto.Email, cancellationToken);
 
-        // 1. Fetch the user by email
-        // var user = await _userRepository.GetByEmailAsync(dto.Email, cancellationToken);
-        // if (user == null)
-        //     throw new UnauthorizedAccessException("Invalid credentials.");
+        if (user is null)
+        {
+            // We return a generic message for security so hackers don't know which emails exist
+            return Result<LoginResponseDto>.Failure("Invalid email or password.");
+        }
 
         // 2. Verify the password
-        // var isPasswordValid = _passwordHasher.Verify(user.PasswordHash, dto.Password);
-        // if (!isPasswordValid)
-        //     throw new UnauthorizedAccessException("Invalid credentials.");
+        bool isPasswordValid = _passwordHasher.Verify(request.RequestDto.Password, user.PasswordHash);
 
-        // 3. Generate JWT (This will be implemented in Phase 3)
-        // var token = _jwtProvider.GenerateToken(user);
+        if (!isPasswordValid)
+        {
+            return Result<LoginResponseDto>.Failure("Invalid email or password.");
+        }
 
-        // 4. Return the successful response
-        // return new LoginResponseDto(token, user.Email, $"{user.FirstName} {user.LastName}");
+        // 3. Generate the JWT Token
+        string token = _jwtProvider.GenerateToken(user);
 
-        // Temporary return to satisfy the compiler until dependencies are wired up
-        return await Task.FromResult(new LoginResponseDto("dummy-jwt-token", dto.Email, "Dummy Name"));
+        // 4. Return success with the DTO
+        var response = new LoginResponseDto(token, user.Email, $"{user.FirstName} {user.LastName}");
+
+        return Result<LoginResponseDto>.Success(response);
     }
 }

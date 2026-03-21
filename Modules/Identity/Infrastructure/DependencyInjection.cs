@@ -1,8 +1,14 @@
-﻿using CareerPath.Identity.Core.Entities;
+﻿using CareerPath.Identity.Core.Contracts;
+using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure.Persistence;
+using CareerPath.Identity.Infrastructure.Repositories;
+using CareerPath.Identity.Infrastructure.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CareerPath.Identity.Infrastructure;
 
@@ -12,14 +18,14 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // 1. Register the PostgreSQL DbContext for the Identity Module
+        // ==========================================
+        // 1. DATABASE & IDENTITY FRAMEWORK (Old Code)
+        // ==========================================
         services.AddDbContext<IdentityDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        // 2. Register ASP.NET Core Identity services
         services.AddIdentityCore<User>(options =>
         {
-            // Configure default Identity rules here
             options.Password.RequireDigit = true;
             options.Password.RequireLowercase = true;
             options.Password.RequireNonAlphanumeric = true;
@@ -29,6 +35,44 @@ public static class DependencyInjection
         })
         .AddRoles<Role>()
         .AddEntityFrameworkStores<IdentityDbContext>();
+
+        // ==========================================
+        // 2. JWT & INTERFACE ADAPTERS (New Code)
+        // ==========================================
+
+        // Bind JWT Options from appsettings.json
+        services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+
+        // Register Contracts & Adapters
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IJwtProvider, JwtProvider>();
+
+        // Configure JWT Authentication Middleware
+        var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
+        if (jwtOptions == null) throw new System.Exception("JwtOptions is missing in appsettings.json");
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOptions.Issuer,
+                ValidAudience = jwtOptions.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+            };
+        });
+
+
+        services.AddScoped<IEmailService, MailtrapEmailService>();
 
         return services;
     }
