@@ -3,12 +3,12 @@ using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using CareerPath.Identity.Core;
+using CareerPath.Identity.Core.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. REGISTRATION PHASE ---
 // Wire up the Identity module's infrastructure (Database, DI, Identity Core)
-builder.Services.AddIdentityInfrastructure(builder.Configuration);
 
 // Standard API services
 builder.Services.AddControllers();
@@ -35,9 +35,10 @@ using (var scope = app.Services.CreateScope())
         var userManager = scopedProvider.GetRequiredService<UserManager<User>>();
         var roleManager = scopedProvider.GetRequiredService<RoleManager<Role>>();
         var configuration = scopedProvider.GetRequiredService<IConfiguration>();
+        var passwordHasher = scopedProvider.GetRequiredService<IPasswordHasher>(); // <-- ADD THIS LINE
 
         // Execute the seeding logic
-        await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration);
+        await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration, passwordHasher);
     }
     catch (Exception ex)
     {

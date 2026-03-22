@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
+using CareerPath.Identity.Core.Features.Commands.VerifyEmail;
 
 namespace CareerPath.Identity.Api.Controllers;
 
@@ -46,5 +47,20 @@ public class AuthController : ControllerBase
 
         // Returns a 200 OK with the generated JWT string from the Result<T>.Value
         return Ok(new { Token = result.Value });
+    }
+    [HttpPost("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailRequestDto request, CancellationToken cancellationToken)
+    {
+        var command = new VerifyEmailCommand(request);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        // Using !result.IsSuccess based on our previous Result pattern discussion
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { Error = result.Error });
+        }
+
+        return Ok(new { Message = "Email successfully verified. You can now log in." });
     }
 }

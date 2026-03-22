@@ -1,5 +1,7 @@
-﻿using CareerPath.Identity.Core.Entities;
+﻿using CareerPath.Identity.Core.Contracts;
+using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Core.Enums;
+using CareerPath.Identity.Infrastructure.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -10,7 +12,9 @@ public static class IdentityDataSeeder
     public static async Task SeedAsync(
         UserManager<User> userManager,
         RoleManager<Role> roleManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IPasswordHasher passwordHasher)
+
     {
         // 1. Seed Roles dynamically from the C# Enum
         foreach (var roleName in Enum.GetNames(typeof(Roles)))
@@ -39,8 +43,8 @@ public static class IdentityDataSeeder
                     EmailConfirmed = true,
                     IsActive = true
                 };
-
-                var result = await userManager.CreateAsync(superAdmin, superAdminPassword);
+                superAdmin.PasswordHash = passwordHasher.Hash(superAdminPassword);
+                var result = await userManager.CreateAsync(superAdmin);
 
                 if (result.Succeeded)
                 {

@@ -73,4 +73,29 @@ public class UserRepository : IUserRepository
 
         return Result.Success();
     }
+    public async Task<bool> VerifyOtpAsync(User user, string provider, string tokenName, string providedOtp, CancellationToken cancellationToken = default)
+    {
+        // Fetch the token natively from the AspNetUserTokens table
+        string? storedToken = await _userManager.GetAuthenticationTokenAsync(user, provider, tokenName);
+
+        if (storedToken == providedOtp)
+        {
+            // If it matches, delete it so it cannot be used again (One-Time Password)
+            await _userManager.RemoveAuthenticationTokenAsync(user, provider, tokenName);
+            return true;
+        }
+
+        return false;
+    }
+
+    public async Task<Result> ConfirmEmailAsync(User user, CancellationToken cancellationToken = default)
+    {
+        user.EmailConfirmed = true;
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+            return Result.Failure("Failed to update user email confirmation status.");
+
+        return Result.Success();
+    }
 }
