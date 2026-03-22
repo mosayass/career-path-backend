@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\CareerPath.Shared\CareerPath.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

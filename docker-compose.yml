@@ -26,12 +26,13 @@ services:
       - ConnectionStrings__DefaultConnection=Host=careerpath-db;Port=5432;Database=CareerPathDb;Username=postgres;Password=SuperSecretPassword123!
       - SuperAdmin__Email=superadmin@careerpath.com
       - SuperAdmin__Password=SuperStrongPassword123!
+      - AiModelService__BaseUrl=http://fast_inference_api:8000/
     ports:
       - "8080:8080"
     depends_on:
       - db
     networks:
-      - ai_shared_network
+      - ai_shared_network 
 
 # Permanent storage for the database
 volumes:
