@@ -1,6 +1,8 @@
 ﻿using CareerPath.Assessment.Core.Contracts;
 using CareerPath.Assessment.Infrastructure.Clients;
 using CareerPath.Assessment.Infrastructure.Persistence;
+using CareerPath.Assessment.Infrastructure.Repositories;
+using CareerPath.Assessment.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,12 @@ public static class DependencyInjection
 
         services.AddDbContext<AssessmentsDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        // 3. Repositories & Providers (NEW ADDITIONS)
+        services.AddScoped<IAssessmentRepository, AssessmentRepository>();
+
+        // Singleton because it reads static dictionary mappings from configuration
+        services.AddSingleton<ICareerMappingProvider, AppSettingsCareerMappingProvider>();
 
         return services;
     }

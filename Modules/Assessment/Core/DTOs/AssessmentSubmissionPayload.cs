@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace CareerPath.Assessment.Core.DTOs;
 
 public record AssessmentSubmissionPayload(
-    Guid UserId,
-    IEnumerable<string> Answers 
+    [property: JsonPropertyName("features")] IEnumerable<float> Features
 );
