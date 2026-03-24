@@ -1,9 +1,12 @@
+using CareerPath.Assessment.Core;
+using CareerPath.Assessment.Infrastructure;
+using CareerPath.Identity.Core;
+using CareerPath.Identity.Core.Contracts;
 using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
-using CareerPath.Identity.Core;
-using CareerPath.Identity.Core.Contracts;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +16,41 @@ var builder = WebApplication.CreateBuilder(args);
 // Standard API services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// --- Update your AddSwaggerGen block to this ---
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter 'Bearer {token}'",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 // Add Identity Module Dependencies
 builder.Services.AddIdentityCoreServices();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
-
+// Add Assessment Module Dependencies
+builder.Services.AddAssessmentCore();
+builder.Services.AddAssessmentInfrastructure(builder.Configuration);
 // Register Global Exception Handling
 builder.Services.AddExceptionHandler<CareerPath.Host.Middleware.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
