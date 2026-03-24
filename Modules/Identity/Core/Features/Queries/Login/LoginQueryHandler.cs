@@ -31,7 +31,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
         if (user is null)
         {
             // We return a generic message for security so hackers don't know which emails exist
-            return Result<LoginResponseDto>.Failure("Invalid email or password.");
+            return Result<LoginResponseDto>.Failure(ErrorType.Unauthorized, "Invalid email or password.");
         }
 
         // 2. Verify the password
@@ -39,13 +39,25 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
 
         if (!isPasswordValid)
         {
-            return Result<LoginResponseDto>.Failure("Invalid email or password.");
+            return Result<LoginResponseDto>.Failure(ErrorType.Unauthorized, "Invalid email or password.");
         }
 
-        // 3. Generate the JWT Token
+        // 3. Check if the email is confirmed
+        if (!user.EmailConfirmed)
+        {
+            return Result<LoginResponseDto>.Failure(ErrorType.Forbidden, "Email not confirmed. Please check your inbox.");
+        }
+
+        // 4. Check if the account is active (Soft Delete support)
+        if (!user.IsActive)
+        {
+            return Result<LoginResponseDto>.Failure(ErrorType.Forbidden, "Account is deactivated. Please contact support.");
+        }
+
+        // 5. Generate the JWT Token
         string token = _jwtProvider.GenerateToken(user);
 
-        // 4. Return success with the DTO
+        // 6. Return success with the DTO
         var response = new LoginResponseDto(token, user.Email, $"{user.FirstName} {user.LastName}");
 
         return Result<LoginResponseDto>.Success(response);
