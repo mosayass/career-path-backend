@@ -55,7 +55,6 @@ builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddAssessmentCore();
 builder.Services.AddAssessmentInfrastructure(builder.Configuration);
 // Add Careers Module Dependencis 
-// Add Careers Module Dependencies
 builder.Services.AddCareersCore();
 builder.Services.AddCareersInfrastructure(builder.Configuration);
 // Register Global Exception Handling
