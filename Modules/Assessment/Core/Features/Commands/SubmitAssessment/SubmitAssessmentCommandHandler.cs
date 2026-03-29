@@ -40,18 +40,7 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
         if (topMatches.Count < 3)
             return Result<Guid>.Failure("The AI model did not return the required top 3 predictions.");
 
-        // 2. Map the integer labels to actual Career Names securely
-        var primaryMap = _mappingProvider.GetCareerName(topMatches[0].JobLabel);
-        var secondaryMap = _mappingProvider.GetCareerName(topMatches[1].JobLabel);
-        var tertiaryMap = _mappingProvider.GetCareerName(topMatches[2].JobLabel);
-
-        if (!primaryMap.IsSuccess || !secondaryMap.IsSuccess || !tertiaryMap.IsSuccess)
-        {
-            // If any mapping fails, we combine the errors and abort.
-            return Result<Guid>.Failure($"{primaryMap.Error} | {secondaryMap.Error} | {tertiaryMap.Error}");
-        }
-
-        // 3. Construct Domain Entities
+        // 2. Construct Domain Entities
         var submissionId = Guid.NewGuid();
 
         var submission = new AssessmentSubmission
@@ -64,13 +53,14 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 
         var assessmentResult = new AssessmentResult
         {
+            PrimaryJobLabel = topMatches[0].JobLabel,
+            SecondaryJobLabel = topMatches[1].JobLabel,
+            TertiaryJobLabel = topMatches[2].JobLabel,
+
             Id = Guid.NewGuid(),
             AssessmentSubmissionId = submissionId,
-            PrimaryCareer = primaryMap.Value!,
             PrimaryConfidence = (decimal)topMatches[0].Confidence,
-            SecondaryCareer = secondaryMap.Value!,
             SecondaryConfidence = (decimal)topMatches[1].Confidence,
-            TertiaryCareer = tertiaryMap.Value!,
             TertiaryConfidence = (decimal)topMatches[2].Confidence,
             GeneratedAt = DateTime.UtcNow
         };

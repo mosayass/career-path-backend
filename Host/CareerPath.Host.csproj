@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Modules\Assessment\Infrastructure\CareerPath.Assessment.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Community\Api\CareerPath.Community.Api.csproj" />
     <ProjectReference Include="..\Modules\Community\Infrastructure\CareerPath.Community.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Careers\Infrastructure\CareerPath.Careers.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

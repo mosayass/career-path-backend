@@ -20,7 +20,7 @@ RUN dotnet build "CareerPath.Host.csproj" -c Release -o /app/build
 
 # 3. Publish the application
 FROM build AS publish
-RUN dotnet publish "CareerPath.Host.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "CareerPath.Host.csproj" -c Release -o /app/publish /p:UseAppHost=false -m:1
 
 # 4. Final production-ready image
 FROM base AS final

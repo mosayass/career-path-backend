@@ -1,4 +1,4 @@
-﻿using CareerPath.Shared.Responses;
+﻿    using CareerPath.Shared.Responses;
 
 namespace CareerPath.Assessment.Core.Contracts;
 

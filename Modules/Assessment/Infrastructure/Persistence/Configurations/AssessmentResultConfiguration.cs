@@ -14,17 +14,14 @@ public class AssessmentResultConfiguration : IEntityTypeConfiguration<Assessment
         // 2. Primary Key
         builder.HasKey(r => r.Id);
 
-        // 3. String Limits
-        builder.Property(r => r.PrimaryCareer)
-            .HasMaxLength(255)
+        // 3. AI Job Labels (Replacing the old strings)
+        builder.Property(r => r.PrimaryJobLabel)
             .IsRequired();
 
-        builder.Property(r => r.SecondaryCareer)
-            .HasMaxLength(255)
+        builder.Property(r => r.SecondaryJobLabel)
             .IsRequired();
 
-        builder.Property(r => r.TertiaryCareer)
-            .HasMaxLength(255)
+        builder.Property(r => r.TertiaryJobLabel)
             .IsRequired();
 
         // 4. Decimal Precision (e.g., 0.9543)

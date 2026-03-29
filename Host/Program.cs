@@ -7,6 +7,9 @@ using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using CareerPath.Careers.Core;
+using CareerPath.Careers.Infrastructure;
+using CareerPath.Careers.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +54,10 @@ builder.Services.AddIdentityInfrastructure(builder.Configuration);
 // Add Assessment Module Dependencies
 builder.Services.AddAssessmentCore();
 builder.Services.AddAssessmentInfrastructure(builder.Configuration);
+// Add Careers Module Dependencis 
+// Add Careers Module Dependencies
+builder.Services.AddCareersCore();
+builder.Services.AddCareersInfrastructure(builder.Configuration);
 // Register Global Exception Handling
 builder.Services.AddExceptionHandler<CareerPath.Host.Middleware.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -70,8 +77,12 @@ using (var scope = app.Services.CreateScope())
         var configuration = scopedProvider.GetRequiredService<IConfiguration>();
         var passwordHasher = scopedProvider.GetRequiredService<IPasswordHasher>(); // <-- ADD THIS LINE
 
-        // Execute the seeding logic
+        // Execute identity seeding 
         await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration, passwordHasher);
+
+        // Execute Careers Seeding
+        var careersSeeder = scopedProvider.GetRequiredService<CareersDataSeeder>();
+        await careersSeeder.SeedAsync();
     }
     catch (Exception ex)
     {
