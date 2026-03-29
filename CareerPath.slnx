@@ -13,6 +13,16 @@
   <Folder Name="/Modules/Assessment/Infrastructure/">
     <Project Path="Modules/Assessment/Infrastructure/CareerPath.Assessment.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/Modules/Careers/" />
+  <Folder Name="/Modules/Careers/Api/">
+    <Project Path="Modules/Careers/Api/CareerPath.Careers.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Careers/Core/">
+    <Project Path="Modules/Careers/Core/CareerPath.Careers.Core.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Careers/Infrastructure/">
+    <Project Path="Modules/Careers/Infrastructure/CareerPath.Careers.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/Modules/Community/" />
   <Folder Name="/Modules/Community/Api/">
     <Project Path="Modules/Community/Api/CareerPath.Community.Api.csproj" />

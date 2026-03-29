@@ -8,4 +8,4 @@ namespace CareerPath.Assessment.Core.Features.Queries.GetAssessmentResult;
 public record GetAssessmentResultQuery(
     Guid UserId,
     Guid AssessmentId
-) : IRequest<Result<AssessmentResultResponse>>;
+) : IRequest<Result<AssessmentResponseDto>>;
