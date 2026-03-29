@@ -38,11 +38,8 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
         }
 
         // 4. Update their status to Confirmed
-        var confirmationResult = await _userRepository.ConfirmEmailAsync(user, cancellationToken);
-        if (!confirmationResult.IsSuccess)
-        {
-            return confirmationResult;
-        }
+        // 4. Update their status to Confirmed
+        await _userRepository.ConfirmEmailAsync(user, cancellationToken);
 
         return Result.Success();
     }
