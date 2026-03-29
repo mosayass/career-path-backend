@@ -44,6 +44,7 @@
     <Project Path="Modules/Identity/Infrastructure/CareerPath.Identity.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Shared/">
+    <Project Path="Shared/CareerPath.Shared.Api/CareerPath.Shared.Api.csproj" Id="9f2fa08f-85bb-495e-8fda-833d27521c45" />
     <Project Path="Shared/CareerPath.Shared.IntegrationEvents/CareerPath.Shared.IntegrationEvents.csproj" />
     <Project Path="Shared/CareerPath.Shared/CareerPath.Shared.csproj" />
   </Folder>

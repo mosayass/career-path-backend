@@ -1,5 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Shared\CareerPath.Shared.Api\CareerPath.Shared.Api.csproj" />
+		<ProjectReference Include="..\Core\CareerPath.Careers.Core.csproj" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
