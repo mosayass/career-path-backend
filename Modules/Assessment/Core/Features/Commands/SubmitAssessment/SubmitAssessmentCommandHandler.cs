@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using CareerPath.Assessment.Core.Contracts;
 using CareerPath.Assessment.Core.Entities;
 using CareerPath.Assessment.Core.DTOs;
@@ -15,16 +11,13 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 {
     private readonly IAiModelClient _aiClient;
     private readonly IAssessmentRepository _repository;
-    private readonly ICareerMappingProvider _mappingProvider;
 
     public SubmitAssessmentCommandHandler(
         IAiModelClient aiClient,
-        IAssessmentRepository repository,
-        ICareerMappingProvider mappingProvider)
+        IAssessmentRepository repository)
     {
         _aiClient = aiClient;
         _repository = repository;
-        _mappingProvider = mappingProvider;
     }
 
     public async Task<Result<Guid>> Handle(SubmitAssessmentCommand request, CancellationToken cancellationToken)

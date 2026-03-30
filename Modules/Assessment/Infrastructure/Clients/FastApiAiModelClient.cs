@@ -1,12 +1,7 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using CareerPath.Assessment.Core.Contracts;
 using CareerPath.Assessment.Core.DTOs;
-using CareerPath.Shared.Responses;
 
 namespace CareerPath.Assessment.Infrastructure.Clients;
 
