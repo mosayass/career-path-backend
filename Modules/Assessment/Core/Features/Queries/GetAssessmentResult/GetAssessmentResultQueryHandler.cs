@@ -19,16 +19,13 @@ public class GetAssessmentResultQueryHandler : IRequestHandler<GetAssessmentResu
 
     public async Task<Result<AssessmentResponseDto>> Handle(GetAssessmentResultQuery request, CancellationToken cancellationToken)
     {
-        // 1. Fetch from repository, expecting your current Result<AssessmentSubmission> wrapper
-        var result = await _repository.GetSubmissionByIdAsync(request.AssessmentId, cancellationToken);
+        // 1. Fetch from repository, which now returns the raw entity or null
+        var submission = await _repository.GetSubmissionByIdAsync(request.AssessmentId, cancellationToken);
 
-        if (!result.IsSuccess || result.Value is null)
+        if (submission is null)
         {
-            // Cascade the repository's failure (e.g., NotFound) upward
-            return Result<AssessmentResponseDto>.Failure(result.ErrorType, result.Error);
+            return Result<AssessmentResponseDto>.Failure(ErrorType.NotFound, "Assessment not found.");
         }
-
-        var submission = result.Value;
 
         // 2. CRITICAL SECURITY CHECK: Ensure the user requesting this result actually owns it
         if (submission.UserId != request.UserId)

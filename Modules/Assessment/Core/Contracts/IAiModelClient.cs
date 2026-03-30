@@ -7,7 +7,7 @@ namespace CareerPath.Assessment.Core.Contracts;
 
 public interface IAiModelClient
 {
-    Task<Result<AiPredictionResponse>> GetPredictionsAsync(
+    Task<AiPredictionResponse> GetPredictionsAsync(
         AssessmentSubmissionPayload payload,
         CancellationToken cancellationToken = default);
 }

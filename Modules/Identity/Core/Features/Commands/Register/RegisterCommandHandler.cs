@@ -53,12 +53,13 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result>
         string otp = new Random().Next(100000, 999999).ToString();
 
         // 6. Save the OTP to the AspNetUserTokens table natively
-        var tokenResult = await _userRepository.SaveVerificationTokenAsync(newUser, "CareerPathApp", "EmailConfirmationOTP", otp, cancellationToken);
-
-        if (!tokenResult.IsSuccess)
-        {
-            return Result.Failure("Account created, but failed to generate verification token.");
-        }
+        // 6. Save the OTP to the AspNetUserTokens table natively
+        await _userRepository.SaveVerificationTokenAsync(
+            newUser,
+            "CareerPathApp",
+            "EmailConfirmationOTP",
+            otp,
+            cancellationToken);
 
         // 7. Send the Email via Mailtrap
         string emailBody = $@"
