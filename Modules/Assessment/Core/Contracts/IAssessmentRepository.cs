@@ -8,7 +8,6 @@ namespace CareerPath.Assessment.Core.Contracts;
 
 public interface IAssessmentRepository
 {
-    // We return Result<Guid> strictly adhering to your error handling pattern
-    Task<Result<Guid>> AddSubmissionAsync(AssessmentSubmission submission, CancellationToken cancellationToken = default);
-    Task<Result<AssessmentSubmission>> GetSubmissionByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Guid> AddSubmissionAsync(AssessmentSubmission submission, CancellationToken cancellationToken = default);
+    Task<AssessmentSubmission?> GetSubmissionByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

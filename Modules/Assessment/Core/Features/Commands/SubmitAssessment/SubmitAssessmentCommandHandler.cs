@@ -31,12 +31,12 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
     {
         // 1. Call the AI Model
         var payload = new AssessmentSubmissionPayload(request.Answers);
-        var aiResult = await _aiClient.GetPredictionsAsync(payload, cancellationToken);
 
-        if (!aiResult.IsSuccess || aiResult.Value == null)
-            return Result<Guid>.Failure(aiResult.Error);
+        // This now directly returns the response or throws an exception (caught globally)
+        var aiPrediction = await _aiClient.GetPredictionsAsync(payload, cancellationToken);
 
-        var topMatches = aiResult.Value.TopMatches.OrderBy(m => m.Rank).ToList();
+        var topMatches = aiPrediction.TopMatches.OrderBy(m => m.Rank).ToList();
+
         if (topMatches.Count < 3)
             return Result<Guid>.Failure("The AI model did not return the required top 3 predictions.");
 
@@ -69,6 +69,7 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
         submission.Result = assessmentResult;
 
         // 4. Persist and Return
-        return await _repository.AddSubmissionAsync(submission, cancellationToken);
+        var savedId = await _repository.AddSubmissionAsync(submission, cancellationToken);
+        return Result<Guid>.Success(savedId);
     }
 }
