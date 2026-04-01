@@ -7,27 +7,23 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-
     <!-- Identity -->
     <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="10.0.3" />
-
     <!-- Extensions -->
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.5" />
-
     <!-- Auth / Security -->
     <PackageVersion Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
-
     <!-- Validation & Mediator -->
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="MediatR" Version="14.0.0" />
-
     <!-- API -->
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>

@@ -34,5 +34,9 @@ namespace CareerPath.Profiles.Infrastructure.Repositories
             return await _context.UserProfiles
                 .AnyAsync(p => p.UserId == userId, cancellationToken);
         }
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace CareerPath.Profiles.Core.Contracts
         Task AddAsync(UserProfile profile, CancellationToken cancellationToken = default);
 
         Task<bool> ExistsAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

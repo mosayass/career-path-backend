@@ -20,6 +20,15 @@ namespace CareerPath.Profiles.Core.Entities
         // Standard Audit Properties
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public UserProfile(Guid userId, string displayName, ProfileType type)
+        {
+            UserId = userId;
+            DisplayName = displayName;
+            Type = type;
+            ReputationScore = 0; // Default
+            IsAcceptingDirectMessages = false; // Default
+            CreatedAt = DateTime.UtcNow;
+        }
     }
 
     public enum ProfileType
