@@ -4,6 +4,7 @@ using CareerPath.Assessment.Core.Entities;
 using CareerPath.Assessment.Core.DTOs;
 using CareerPath.Shared.Responses;
 using MediatR;
+using CareerPath.Shared.IntegrationEvents.Assessment;
 
 namespace CareerPath.Assessment.Core.Features.Commands.SubmitAssessment;
 
@@ -11,13 +12,16 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 {
     private readonly IAiModelClient _aiClient;
     private readonly IAssessmentRepository _repository;
+    private readonly IPublisher _publisher;
 
     public SubmitAssessmentCommandHandler(
         IAiModelClient aiClient,
-        IAssessmentRepository repository)
+        IAssessmentRepository repository,
+        IPublisher publisher)
     {
         _aiClient = aiClient;
         _repository = repository;
+        _publisher = publisher;
     }
 
     public async Task<Result<Guid>> Handle(SubmitAssessmentCommand request, CancellationToken cancellationToken)
@@ -63,6 +67,18 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 
         // 4. Persist and Return
         var savedId = await _repository.AddSubmissionAsync(submission, cancellationToken);
+
+        //5. Publish Integration Event with the mapped integer IDs for Sector and Career    
+        // TODO: You must map 'topMatches[0].JobLabel' to the actual integer IDs here before publishing.
+        int mappedSectorId = 0; // Replace with your lookup logic
+        int mappedCareerId = 0; // Replace with your lookup logic
+
+        var integrationEvent = new AssessmentSubmittedIntegrationEvent(
+            request.UserId,
+            mappedSectorId,
+            mappedCareerId,
+            savedId
+        );
         return Result<Guid>.Success(savedId);
     }
 }
