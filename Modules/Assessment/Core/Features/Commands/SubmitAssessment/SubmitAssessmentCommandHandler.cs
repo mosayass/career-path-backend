@@ -5,6 +5,7 @@ using CareerPath.Assessment.Core.DTOs;
 using CareerPath.Shared.Responses;
 using MediatR;
 using CareerPath.Shared.IntegrationEvents.Assessment;
+using CareerPath.Shared.Contracts.Careers;
 
 namespace CareerPath.Assessment.Core.Features.Commands.SubmitAssessment;
 
@@ -13,15 +14,18 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
     private readonly IAiModelClient _aiClient;
     private readonly IAssessmentRepository _repository;
     private readonly IPublisher _publisher;
+    private readonly ISender _sender;
 
     public SubmitAssessmentCommandHandler(
         IAiModelClient aiClient,
         IAssessmentRepository repository,
-        IPublisher publisher)
+        IPublisher publisher,
+        ISender sender)
     {
         _aiClient = aiClient;
         _repository = repository;
         _publisher = publisher;
+        _sender = sender;
     }
 
     public async Task<Result<Guid>> Handle(SubmitAssessmentCommand request, CancellationToken cancellationToken)

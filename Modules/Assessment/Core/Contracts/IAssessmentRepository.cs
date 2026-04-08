@@ -10,4 +10,5 @@ public interface IAssessmentRepository
 {
     Task<Guid> AddSubmissionAsync(AssessmentSubmission submission, CancellationToken cancellationToken = default);
     Task<AssessmentSubmission?> GetSubmissionByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
