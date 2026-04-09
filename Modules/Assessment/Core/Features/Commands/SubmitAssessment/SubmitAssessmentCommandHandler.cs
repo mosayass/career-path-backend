@@ -1,11 +1,12 @@
-﻿using System.Text.Json;
-using CareerPath.Assessment.Core.Contracts;
-using CareerPath.Assessment.Core.Entities;
+﻿using CareerPath.Assessment.Core.Contracts;
 using CareerPath.Assessment.Core.DTOs;
+using CareerPath.Assessment.Core.Entities;
+using CareerPath.Shared.Contracts.Careers;
+using CareerPath.Shared.IntegrationEvents.Assessment;
+using CareerPath.Shared.IntegrationEvents.Contracts;
 using CareerPath.Shared.Responses;
 using MediatR;
-using CareerPath.Shared.IntegrationEvents.Assessment;
-using CareerPath.Shared.Contracts.Careers;
+using System.Text.Json;
 
 namespace CareerPath.Assessment.Core.Features.Commands.SubmitAssessment;
 
@@ -13,18 +14,18 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 {
     private readonly IAiModelClient _aiClient;
     private readonly IAssessmentRepository _repository;
-    private readonly IPublisher _publisher;
+    private readonly IEventCollector _eventCollector;
     private readonly ISender _sender;
 
     public SubmitAssessmentCommandHandler(
         IAiModelClient aiClient,
         IAssessmentRepository repository,
-        IPublisher publisher,
+        IEventCollector eventCollector,
         ISender sender)
     {
         _aiClient = aiClient;
         _repository = repository;
-        _publisher = publisher;
+        _eventCollector = eventCollector;
         _sender = sender;
     }
 
@@ -73,16 +74,22 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
         var savedId = await _repository.AddSubmissionAsync(submission, cancellationToken);
 
         //5. Publish Integration Event with the mapped integer IDs for Sector and Career    
-        // TODO: You must map 'topMatches[0].JobLabel' to the actual integer IDs here before publishing.
+        // TODO: You must map 'topMatches[0].JobLabel' to the actual Career IDs here before publishing.
         int mappedSectorId = 0; // Replace with your lookup logic
-        int mappedCareerId = 0; // Replace with your lookup logic
+        Guid mappedCareerId = Guid.Empty; // Replace with your lookup logic
 
         var integrationEvent = new AssessmentSubmittedIntegrationEvent(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
             request.UserId,
             mappedSectorId,
             mappedCareerId,
             savedId
         );
+
+        _eventCollector.AddEvent(integrationEvent);
+
+        await _repository.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(savedId);
     }
 }

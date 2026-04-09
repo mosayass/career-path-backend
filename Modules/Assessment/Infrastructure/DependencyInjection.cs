@@ -1,7 +1,11 @@
 ﻿using CareerPath.Assessment.Core.Contracts;
+using CareerPath.Assessment.Infrastructure.BackgroundJobs;
 using CareerPath.Assessment.Infrastructure.Clients;
 using CareerPath.Assessment.Infrastructure.Persistence;
+using CareerPath.Assessment.Infrastructure.Persistence.Interceptors;
 using CareerPath.Assessment.Infrastructure.Repositories;
+using CareerPath.Assessment.Infrastructure.Services;
+using CareerPath.Shared.IntegrationEvents.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,14 +34,21 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrWhiteSpace(connectionString))
             throw new System.Exception("DefaultConnection is missing in appsettings.json");
+        
+        services.AddSingleton<InsertOutboxMessagesInterceptor>();
 
-        services.AddDbContext<AssessmentsDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        services.AddDbContext<AssessmentsDbContext>((sp, options) =>
+        {
+            var interceptor = sp.GetRequiredService<InsertOutboxMessagesInterceptor>();
+            options.UseNpgsql(connectionString)
+                   .AddInterceptors(interceptor);
+        });
 
-        // 3. Repositories & Providers (NEW ADDITIONS)
+        //  Repositories & Providers 
         services.AddScoped<IAssessmentRepository, AssessmentRepository>();
+        services.AddHostedService<ProcessOutboxMessagesJob>();
 
-
+        services.AddScoped<IEventCollector, EventCollector>();
         return services;
     }
 }

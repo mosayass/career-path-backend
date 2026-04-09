@@ -10,7 +10,7 @@ namespace CareerPath.Profiles.Core.Features.Queries.GetProfileById
         string? AvatarUrl,
         string Type, // Serialized as string for cleaner API consumption
         int PrimarySectorId,
-        int? TargetCareerId,
+        Guid? TargetCareerId,
         Guid? LatestAssessmentId,
         int ReputationScore,
         bool IsAcceptingDirectMessages

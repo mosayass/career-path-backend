@@ -1,5 +1,6 @@
-﻿using System;
+﻿using CareerPath.Shared.IntegrationEvents.Contracts;
 using MediatR;
+using System;
 
 namespace CareerPath.Shared.IntegrationEvents.Assessment
 {
@@ -8,7 +9,7 @@ namespace CareerPath.Shared.IntegrationEvents.Assessment
         DateTime OccurredOn,
         Guid UserId,
         int PrimarySectorId,
-        int TargetCareerId,
+        Guid TargetCareerId,
         Guid AssessmentId
-    ) : INotification;
+    ) : IIntegrationEvent;
 }

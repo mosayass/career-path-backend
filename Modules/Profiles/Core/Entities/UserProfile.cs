@@ -13,7 +13,7 @@ namespace CareerPath.Profiles.Core.Entities
         public ProfileType Type { get; set; }
         public int PrimarySectorId { get; set; }
         public int ReputationScore { get; set; }
-        public int? TargetCareerId { get; set; }
+        public Guid? TargetCareerId { get; set; }
         public Guid? LatestAssessmentId { get; set; }
         public bool IsAcceptingDirectMessages { get; set; }
 

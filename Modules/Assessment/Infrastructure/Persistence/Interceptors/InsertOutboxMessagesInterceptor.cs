@@ -1,9 +1,10 @@
-﻿// File: InsertOutboxMessagesInterceptor.cs
-using CareerPath.Shared.Domain;
-using CareerPath.Shared.IntegrationEvents;
+﻿using CareerPath.Assessment.Core.Entities;
+using CareerPath.Shared.Contracts;
+using CareerPath.Shared.IntegrationEvents.Contracts;
 using CareerPath.Shared.IntegrationEvents.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Text.Json;
 
 namespace CareerPath.Assessment.Infrastructure.Persistence.Interceptors;
@@ -15,35 +16,37 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        var dbContext = eventData.Context;
-        if (dbContext is null) return base.SavingChangesAsync(eventData, result, cancellationToken);
-
-        var outboxMessages = dbContext.ChangeTracker
-            .Entries<AggregateRoot>()
-            .Select(x => x.Entity)
-            .SelectMany(entity =>
-            {
-                var allEvents = entity.Events.ToList();
-                entity.ClearEvents();
-                return allEvents;
-            })
-            // ARCHITECTURAL GATEKEEPER: Only move IIntegrationEvent siblings to the Outbox
-            .Where(e => e is IIntegrationEvent)
-            .Cast<IIntegrationEvent>()
-            .Select(integrationEvent => new OutboxMessage
-            {
-                Id = integrationEvent.Id,
-                OccurredOn = integrationEvent.OccurredOn,
-                Type = integrationEvent.GetType().FullName!,
-                Content = JsonSerializer.Serialize(integrationEvent, integrationEvent.GetType())
-            })
-            .ToList();
-
-        if (outboxMessages.Count != 0)
+        if (eventData.Context is not null)
         {
-            dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
+            InsertOutboxMessages(eventData.Context);
         }
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void InsertOutboxMessages(DbContext context)
+    {
+        // 1. Dynamically resolve the Scoped Mailbag via the DbContext
+        var eventCollector = context.GetService<IEventCollector>();
+        if (eventCollector == null) return;
+
+        // 2. Grab the events
+        var events = eventCollector.GetEvents();
+        if (!events.Any()) return;
+
+        // 3. Serialize them into Outbox Messages
+        var outboxMessages = events.Select(integrationEvent => new OutboxMessage
+        {
+            Id = Guid.NewGuid(),
+            OccurredOn = DateTime.UtcNow,
+            Type = integrationEvent.GetType().AssemblyQualifiedName ?? integrationEvent.GetType().Name,
+            Content = JsonSerializer.Serialize((object)integrationEvent, integrationEvent.GetType())
+        }).ToList();
+
+        // 4. Attach to the current transaction
+        context.Set<OutboxMessage>().AddRange(outboxMessages);
+
+        // 5. Empty the bucket so they aren't processed twice
+        eventCollector.Clear();
     }
 }

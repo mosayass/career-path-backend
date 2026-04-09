@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System;
 
-namespace CareerPath.Shared.IntegrationEvents
+namespace CareerPath.Shared.IntegrationEvents.Contracts
 {
     public interface IIntegrationEvent : INotification
     {
