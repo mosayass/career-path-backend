@@ -1,5 +1,6 @@
-﻿using System;
+﻿using CareerPath.Shared.IntegrationEvents.Contracts;
 using MediatR;
+using System;
 
 namespace CareerPath.Shared.IntegrationEvents.Identity
 {
@@ -7,6 +8,8 @@ namespace CareerPath.Shared.IntegrationEvents.Identity
         Guid UserId,
         string FirstName,
         string LastName,
-        string Role
-    ) : INotification;
+        string Role,
+        DateTime OccurredOn,
+        Guid Id
+    ) : IIntegrationEvent;
 }

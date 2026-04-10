@@ -1,10 +1,8 @@
 ﻿using CareerPath.Assessment.Core.Contracts;
-using CareerPath.Assessment.Infrastructure.BackgroundJobs;
+using CareerPath.Shared.Infrastructure.Outbox;
 using CareerPath.Assessment.Infrastructure.Clients;
 using CareerPath.Assessment.Infrastructure.Persistence;
-using CareerPath.Assessment.Infrastructure.Persistence.Interceptors;
 using CareerPath.Assessment.Infrastructure.Repositories;
-using CareerPath.Assessment.Infrastructure.Services;
 using CareerPath.Shared.IntegrationEvents.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,7 +44,7 @@ public static class DependencyInjection
 
         //  Repositories & Providers 
         services.AddScoped<IAssessmentRepository, AssessmentRepository>();
-        services.AddHostedService<ProcessOutboxMessagesJob>();
+        services.AddHostedService<ProcessOutboxMessagesJob<AssessmentsDbContext>>();
 
         services.AddScoped<IEventCollector, EventCollector>();
         return services;

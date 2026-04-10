@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\CareerPath.Shared.Infrastructure\CareerPath.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Core\CareerPath.Assessment.Core.csproj" />
   </ItemGroup>
 

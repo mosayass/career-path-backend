@@ -1,6 +1,6 @@
 ﻿using CareerPath.Shared.IntegrationEvents.Contracts;
 
-namespace CareerPath.Assessment.Infrastructure.Services;
+namespace CareerPath.Shared.Infrastructure.Outbox;
 
 public class EventCollector : IEventCollector
 {

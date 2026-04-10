@@ -55,6 +55,7 @@
   </Folder>
   <Folder Name="/Shared/">
     <Project Path="Shared/CareerPath.Shared.Api/CareerPath.Shared.Api.csproj" Id="9f2fa08f-85bb-495e-8fda-833d27521c45" />
+    <Project Path="Shared/CareerPath.Shared.Infrastructure/CareerPath.Shared.Infrastructure.csproj" Id="1395371f-72c2-4e10-ab69-22faf72000b6" />
     <Project Path="Shared/CareerPath.Shared.IntegrationEvents/CareerPath.Shared.IntegrationEvents.csproj" />
     <Project Path="Shared/CareerPath.Shared/CareerPath.Shared.csproj" />
   </Folder>

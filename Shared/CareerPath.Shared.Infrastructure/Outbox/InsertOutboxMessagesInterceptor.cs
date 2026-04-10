@@ -1,13 +1,11 @@
-﻿using CareerPath.Assessment.Core.Entities;
-using CareerPath.Shared.Contracts;
-using CareerPath.Shared.IntegrationEvents.Contracts;
+﻿using CareerPath.Shared.IntegrationEvents.Contracts;
 using CareerPath.Shared.IntegrationEvents.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Text.Json;
 
-namespace CareerPath.Assessment.Infrastructure.Persistence.Interceptors;
+namespace CareerPath.Shared.Infrastructure.Outbox;
 
 public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
 {

@@ -1,6 +1,9 @@
 ﻿using CareerPath.Identity.Core.Contracts;
+using CareerPath.Shared.IntegrationEvents.Contracts;
+using CareerPath.Shared.IntegrationEvents.Identity;
 using CareerPath.Shared.Responses;
 using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,10 +12,11 @@ namespace CareerPath.Identity.Core.Features.Commands.VerifyEmail;
 public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly IUserRepository _userRepository;
-
-    public VerifyEmailCommandHandler(IUserRepository userRepository)
+    private readonly IEventCollector _eventCollector;
+    public VerifyEmailCommandHandler(IUserRepository userRepository, IEventCollector eventCollector)
     {
         _userRepository = userRepository;
+        _eventCollector = eventCollector;
     }
 
     public async Task<Result> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
@@ -36,8 +40,17 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
         {
             return Result.Failure("Invalid or expired verification code.");
         }
+        //TODO UPDATE THIS TO MAP FROM USER ENTITY
+        var integrationEvent = new UserRegisteredIntegrationEvent(
+            Id: Guid.NewGuid(),
+            OccurredOn: DateTime.UtcNow,
+            UserId: user.Id,
+            FirstName: user.FirstName ?? "Unknown", // Map from your user entity
+            LastName: user.LastName ?? "Unknown",   // Map from your user entity
+            Role: "User" // Or map from user.Role if you have it
+        );
+        _eventCollector.AddEvent(integrationEvent);
 
-        // 4. Update their status to Confirmed
         // 4. Update their status to Confirmed
         await _userRepository.ConfirmEmailAsync(user, cancellationToken);
 

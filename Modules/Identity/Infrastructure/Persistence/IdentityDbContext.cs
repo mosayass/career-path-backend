@@ -1,4 +1,5 @@
 ﻿using CareerPath.Identity.Core.Entities;
+using CareerPath.Shared.Infrastructure.Outbox;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
@@ -11,7 +12,7 @@ public class IdentityDbContext : IdentityDbContext<User, Role, Guid>
         : base(options)
     {
     }
-
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -55,5 +56,12 @@ public class IdentityDbContext : IdentityDbContext<User, Role, Guid>
         {
             entity.ToTable("UserTokens", schema);
         });
+
+        builder.Entity<OutboxMessage>(builder =>
+        {
+            builder.ToTable("OutboxMessages", schema);
+            builder.HasKey(x => x.Id);
+        });
+
     }
 }
