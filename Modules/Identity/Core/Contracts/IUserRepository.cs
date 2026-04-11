@@ -15,4 +15,5 @@ public interface IUserRepository
     Task SaveVerificationTokenAsync(User user, string provider, string tokenName, string token, CancellationToken cancellationToken = default);
     Task<bool> VerifyOtpAsync(User user, string provider, string tokenName, string providedOtp, CancellationToken cancellationToken = default);
     Task ConfirmEmailAsync(User user, CancellationToken cancellationToken = default);
+    Task<string?> GetRoleAsync(Guid userId, CancellationToken cancellationToken = default);
 }

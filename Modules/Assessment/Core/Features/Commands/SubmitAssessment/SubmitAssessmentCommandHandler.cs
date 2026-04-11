@@ -1,9 +1,12 @@
-﻿using System.Text.Json;
-using CareerPath.Assessment.Core.Contracts;
-using CareerPath.Assessment.Core.Entities;
+﻿using CareerPath.Assessment.Core.Contracts;
 using CareerPath.Assessment.Core.DTOs;
+using CareerPath.Assessment.Core.Entities;
+using CareerPath.Shared.Contracts.Careers;
+using CareerPath.Shared.IntegrationEvents.Assessment;
+using CareerPath.Shared.IntegrationEvents.Contracts;
 using CareerPath.Shared.Responses;
 using MediatR;
+using System.Text.Json;
 
 namespace CareerPath.Assessment.Core.Features.Commands.SubmitAssessment;
 
@@ -11,13 +14,19 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 {
     private readonly IAiModelClient _aiClient;
     private readonly IAssessmentRepository _repository;
+    private readonly IEventCollector _eventCollector;
+    private readonly ISender _sender;
 
     public SubmitAssessmentCommandHandler(
         IAiModelClient aiClient,
-        IAssessmentRepository repository)
+        IAssessmentRepository repository,
+        IEventCollector eventCollector,
+        ISender sender)
     {
         _aiClient = aiClient;
         _repository = repository;
+        _eventCollector = eventCollector;
+        _sender = sender;
     }
 
     public async Task<Result<Guid>> Handle(SubmitAssessmentCommand request, CancellationToken cancellationToken)
@@ -63,6 +72,31 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
 
         // 4. Persist and Return
         var savedId = await _repository.AddSubmissionAsync(submission, cancellationToken);
+
+        //5. Publish Integration Event with the mapped integer IDs for Sector and Career    
+        var mappingQuery = new GetCareerMappingQuery(topMatches[0].JobLabel);
+        var mappingDto = await _sender.Send(mappingQuery, cancellationToken);
+
+        if (mappingDto == null)
+        {
+            return Result<Guid>.Failure($"Could not map AI label ID '{topMatches[0].JobLabel}' to a valid career.");
+        }
+
+        int mappedSectorId = mappingDto.SectorId;
+        Guid mappedCareerId = mappingDto.CareerId;
+
+        var integrationEvent = new AssessmentSubmittedIntegrationEvent(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            request.UserId,
+            mappedSectorId,
+            mappedCareerId,
+            savedId
+        );
+
+        _eventCollector.AddEvent(integrationEvent);
+
+        await _repository.SaveChangesAsync(cancellationToken);
         return Result<Guid>.Success(savedId);
     }
 }

@@ -84,6 +84,34 @@ namespace CareerPath.Assessment.Infrastructure.Persistence.Migrations
                     b.ToTable("AssessmentSubmissions", "assessments");
                 });
 
+            modelBuilder.Entity("CareerPath.Shared.Infrastructure.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", "assessments");
+                });
+
             modelBuilder.Entity("CareerPath.Assessment.Core.Entities.AssessmentResult", b =>
                 {
                     b.HasOne("CareerPath.Assessment.Core.Entities.AssessmentSubmission", "Submission")

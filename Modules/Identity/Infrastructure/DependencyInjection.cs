@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CareerPath.Shared.IntegrationEvents.Contracts;
+using CareerPath.Shared.Infrastructure.Outbox;
 
 namespace CareerPath.Identity.Infrastructure;
 
@@ -18,11 +20,16 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // ==========================================
-        // 1. DATABASE & IDENTITY FRAMEWORK (Old Code)
-        // ==========================================
-        services.AddDbContext<IdentityDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        
+        services.AddDbContext<IdentityDbContext>((sp, options) =>
+        {
+            // Resolve the interceptor from the DI container
+            var interceptor = sp.GetRequiredService<InsertOutboxMessagesInterceptor>();
+
+            // 2. Configure Postgres and attach the interceptor
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                   .AddInterceptors(interceptor);
+        });
 
         services.AddIdentityCore<User>(options =>
         {
@@ -36,9 +43,8 @@ public static class DependencyInjection
         .AddRoles<Role>()
         .AddEntityFrameworkStores<IdentityDbContext>();
 
-        // ==========================================
         // 2. JWT & INTERFACE ADAPTERS (New Code)
-        // ==========================================
+        
 
         // Bind JWT Options from appsettings.json
         services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
@@ -73,6 +79,16 @@ public static class DependencyInjection
 
 
         services.AddScoped<IEmailService, MailtrapEmailService>();
+
+
+        //  Register the Shared Interceptor as a Singleton
+        services.AddSingleton<InsertOutboxMessagesInterceptor>();
+
+        // 2. Register the Mailbag as Scoped (one per HTTP request)
+        services.AddScoped<IEventCollector, EventCollector>();
+
+        // 3. Register the Background Worker explicitly targeting the Identity DB
+        services.AddHostedService<ProcessOutboxMessagesJob<IdentityDbContext>>();
 
         return services;
     }

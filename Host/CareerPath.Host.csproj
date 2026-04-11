@@ -24,6 +24,8 @@
     <ProjectReference Include="..\Modules\Community\Infrastructure\CareerPath.Community.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Careers\Infrastructure\CareerPath.Careers.Infrastructure.csproj" />
 	<ProjectReference Include="..\Modules\Careers\Api\CareerPath.Careers.Api.csproj" />
+	<ProjectReference Include="..\Modules\Profiles\Api\CareerPath.Profiles.Api.csproj" />
+	<ProjectReference Include="..\Modules\Profiles\Infrastructure\CareerPath.Profiles.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

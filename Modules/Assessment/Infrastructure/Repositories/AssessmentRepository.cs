@@ -13,7 +13,6 @@ public class AssessmentRepository(AssessmentsDbContext dbContext) : IAssessmentR
     public async Task<Guid> AddSubmissionAsync(AssessmentSubmission submission, CancellationToken cancellationToken = default)
     {
         await _dbContext.AssessmentSubmissions.AddAsync(submission, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return submission.Id;
     }
@@ -24,5 +23,10 @@ public class AssessmentRepository(AssessmentsDbContext dbContext) : IAssessmentR
         return await _dbContext.AssessmentSubmissions
             .Include(s => s.Result) // Eager load the AI predictions!
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+    }
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }
