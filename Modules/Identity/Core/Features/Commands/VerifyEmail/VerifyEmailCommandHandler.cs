@@ -40,18 +40,20 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
         {
             return Result.Failure("Invalid or expired verification code.");
         }
-        //TODO UPDATE THIS TO MAP FROM USER ENTITY
+
+        var role = await _userRepository.GetRoleAsync(user.Id, cancellationToken) ?? "User";
+        // 4. Publish an integration event to notify other modules about the new user registration
         var integrationEvent = new UserRegisteredIntegrationEvent(
             Id: Guid.NewGuid(),
             OccurredOn: DateTime.UtcNow,
             UserId: user.Id,
-            FirstName: user.FirstName ?? "Unknown", // Map from your user entity
-            LastName: user.LastName ?? "Unknown",   // Map from your user entity
-            Role: "User" // Or map from user.Role if you have it
+            FirstName: user.FirstName,
+            LastName: user.LastName,
+            Role: role
         );
         _eventCollector.AddEvent(integrationEvent);
 
-        // 4. Update their status to Confirmed
+        // 5. Update their status to Confirmed
         await _userRepository.ConfirmEmailAsync(user, cancellationToken);
 
         return Result.Success();

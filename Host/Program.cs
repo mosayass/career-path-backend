@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using CareerPath.Careers.Core;
 using CareerPath.Careers.Infrastructure;
 using CareerPath.Careers.Infrastructure.Persistence;
+using CareerPath.Profiles.Core;
+using CareerPath.Profiles.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,10 @@ builder.Services.AddCareersInfrastructure(builder.Configuration);
 // Register Global Exception Handling
 builder.Services.AddExceptionHandler<CareerPath.Host.Middleware.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+//Register the Profiles Module Dependencies
+builder.Services.AddProfilesCore();
+builder.Services.AddProfilesInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

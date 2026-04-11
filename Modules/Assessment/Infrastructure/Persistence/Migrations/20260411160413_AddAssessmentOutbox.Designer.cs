@@ -3,6 +3,7 @@ using System;
 using CareerPath.Assessment.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CareerPath.Assessment.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AssessmentsDbContext))]
-    partial class AssessmentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260411160413_AddAssessmentOutbox")]
+    partial class AddAssessmentOutbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

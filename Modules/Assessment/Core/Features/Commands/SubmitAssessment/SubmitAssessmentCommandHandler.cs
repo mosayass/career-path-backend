@@ -74,9 +74,16 @@ public class SubmitAssessmentCommandHandler : IRequestHandler<SubmitAssessmentCo
         var savedId = await _repository.AddSubmissionAsync(submission, cancellationToken);
 
         //5. Publish Integration Event with the mapped integer IDs for Sector and Career    
-        // TODO: You must map 'topMatches[0].JobLabel' to the actual Career IDs here before publishing.
-        int mappedSectorId = 0; // Replace with your lookup logic
-        Guid mappedCareerId = Guid.Empty; // Replace with your lookup logic
+        var mappingQuery = new GetCareerMappingQuery(topMatches[0].JobLabel);
+        var mappingDto = await _sender.Send(mappingQuery, cancellationToken);
+
+        if (mappingDto == null)
+        {
+            return Result<Guid>.Failure($"Could not map AI label ID '{topMatches[0].JobLabel}' to a valid career.");
+        }
+
+        int mappedSectorId = mappingDto.SectorId;
+        Guid mappedCareerId = mappingDto.CareerId;
 
         var integrationEvent = new AssessmentSubmittedIntegrationEvent(
             Guid.NewGuid(),

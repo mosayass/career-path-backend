@@ -89,4 +89,19 @@ public class UserRepository(UserManager<User> userManager) : IUserRepository
             throw new InvalidOperationException($"Failed to update user email confirmation status: {errors}");
         }
     }
+    public async Task<string?> GetRoleAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        // 3. Ask the framework for the user's roles
+        var roles = await _userManager.GetRolesAsync(user);
+
+        // 4. Return the first role, or null if the list is empty
+        return roles.FirstOrDefault();
+    }
 }

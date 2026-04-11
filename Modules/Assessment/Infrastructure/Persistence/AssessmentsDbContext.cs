@@ -1,5 +1,5 @@
 ﻿using CareerPath.Assessment.Core.Entities;
-using CareerPath.Shared.IntegrationEvents.Outbox;
+using CareerPath.Shared.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace CareerPath.Assessment.Infrastructure.Persistence;

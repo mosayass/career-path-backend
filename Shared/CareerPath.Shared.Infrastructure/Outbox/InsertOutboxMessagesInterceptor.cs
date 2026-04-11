@@ -1,5 +1,4 @@
 ﻿using CareerPath.Shared.IntegrationEvents.Contracts;
-using CareerPath.Shared.IntegrationEvents.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
