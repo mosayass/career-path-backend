@@ -18,5 +18,8 @@ public interface ICareerRepository
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+    Task<Career?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 
 }
