@@ -57,4 +57,11 @@ public class CareerRepository(CareersDbContext context) : ICareerRepository
 
         return (careers, totalCount);
     }
+    public async Task<Career?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Careers
+            .Include(c => c.Sector)
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
+
 }

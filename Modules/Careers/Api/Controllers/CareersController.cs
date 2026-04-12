@@ -1,5 +1,6 @@
-﻿using CareerPath.Careers.Core.Features.Queries.SearchCareers;
-using CareerPath.Shared.Api.Controllers; // <-- The new namespace!
+﻿using CareerPath.Careers.Core.Features.Queries.GetCareerById;
+using CareerPath.Careers.Core.Features.Queries.SearchCareers;
+using CareerPath.Shared.Api.Controllers; 
 using CareerPath.Shared.Contracts.Careers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,16 @@ namespace CareerPath.Careers.Api.Controllers;
 
 public class CareersController(ISender sender) : ApiControllerBase(sender)
 {
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetCareerById(int id)
+    [HttpGet("by-ai-label/{aiLabelId:int}")]
+    public async Task<IActionResult> GetCareerById(int aiLabelId)
     {
-        var result = await Sender.Send(new GetCareerMatchDetailsQuery(id));
+        var result = await Sender.Send(new GetCareerMatchDetailsQuery(aiLabelId));
+        return HandleResult(result);
+    }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetCareerById(Guid id)
+    {
+        var result = await Sender.Send(new GetCareerSummaryByIdQuery(id));
         return HandleResult(result);
     }
 
