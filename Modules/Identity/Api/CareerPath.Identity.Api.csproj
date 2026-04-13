@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\CareerPath.Shared.Api\CareerPath.Shared.Api.csproj" />
     <ProjectReference Include="..\Core\CareerPath.Identity.Core.csproj" />
   </ItemGroup>
 

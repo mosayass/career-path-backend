@@ -3,14 +3,16 @@ using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure.Persistence;
 using CareerPath.Identity.Infrastructure.Repositories;
 using CareerPath.Identity.Infrastructure.Security;
+using CareerPath.Identity.Infrastructure.Services;
+using CareerPath.Shared.Infrastructure.Outbox;
+using CareerPath.Shared.IntegrationEvents.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using CareerPath.Shared.IntegrationEvents.Contracts;
-using CareerPath.Shared.Infrastructure.Outbox;
 
 namespace CareerPath.Identity.Infrastructure;
 
@@ -41,18 +43,20 @@ public static class DependencyInjection
             options.User.RequireUniqueEmail = true;
         })
         .AddRoles<Role>()
-        .AddEntityFrameworkStores<IdentityDbContext>();
-
+        .AddEntityFrameworkStores<IdentityDbContext>()
+        .AddDefaultTokenProviders();
         // 2. JWT & INTERFACE ADAPTERS (New Code)
-        
+
 
         // Bind JWT Options from appsettings.json
         services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 
         // Register Contracts & Adapters
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<Microsoft.AspNetCore.Identity.IPasswordHasher<User>, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        
 
         // Configure JWT Authentication Middleware
         var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();

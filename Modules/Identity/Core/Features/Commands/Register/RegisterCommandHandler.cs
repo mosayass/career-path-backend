@@ -10,16 +10,16 @@ namespace CareerPath.Identity.Core.Features.Commands.Register;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IIdentityService _identityService;
     private readonly IEmailService _emailService;
 
     public RegisterCommandHandler(
         IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
+        IIdentityService identityService,
         IEmailService emailService)
     {
         _userRepository = userRepository ;
-        _passwordHasher = passwordHasher;
+        _identityService = identityService;
         _emailService = emailService;
     }
 
@@ -32,8 +32,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result>
         if (existingUser != null)
             return Result.Failure("A user with this email already exists.");
 
-        // 2. Hash the password securely
-        var hashedPassword = _passwordHasher.Hash(dto.Password);
+        
 
         // 3. Map DTO to the Domain Entity (Keeping your UserName!)
         var newUser = new User
@@ -41,14 +40,16 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result>
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
-            UserName = dto.Email,
-            PasswordHash = hashedPassword
+            UserName = dto.Email
         };
 
         // 4. Save to Database and Assign Role (Keeping your Role logic!)
-        await _userRepository.AddAsync(newUser, cancellationToken);
-        await _userRepository.AssignRoleAsync(newUser, Roles.Student.ToString(), cancellationToken);
+        var (succeeded, errorMessage) = await _identityService.RegisterUserAsync(newUser, dto.Password, Roles.Student.ToString());
 
+        if (!succeeded)
+        {
+            return Result.Failure(errorMessage ?? "Registration failed.");
+        }
         // 5. Generate the 6-digit OTP
         string otp = new Random().Next(100000, 999999).ToString();
 
