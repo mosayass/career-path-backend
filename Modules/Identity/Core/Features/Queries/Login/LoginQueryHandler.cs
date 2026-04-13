@@ -10,16 +10,16 @@ namespace CareerPath.Identity.Core.Features.Queries.Login;
 public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginResponseDto>>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IIdentityService _identityService;
     private readonly IJwtProvider _jwtProvider;
 
     public LoginQueryHandler(
         IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
+        IIdentityService identityService,
         IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _identityService = identityService;
         _jwtProvider = jwtProvider;
     }
 
@@ -35,8 +35,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
         }
 
         // 2. Verify the password
-        bool isPasswordValid = _passwordHasher.Verify(request.RequestDto.Password, user.PasswordHash);
-
+        bool isPasswordValid = await _identityService.CheckPasswordAsync(user, request.RequestDto.Password);
         if (!isPasswordValid)
         {
             return Result<LoginResponseDto>.Failure(ErrorType.Unauthorized, "Invalid email or password.");

@@ -10,10 +10,9 @@ namespace CareerPath.Identity.Infrastructure.Persistence;
 public static class IdentityDataSeeder
 {
     public static async Task SeedAsync(
-        UserManager<User> userManager,
-        RoleManager<Role> roleManager,
-        IConfiguration configuration,
-        IPasswordHasher passwordHasher)
+    UserManager<User> userManager,
+    RoleManager<Role> roleManager,
+    IConfiguration configuration)
 
     {
         // 1. Seed Roles dynamically from the C# Enum
@@ -43,8 +42,7 @@ public static class IdentityDataSeeder
                     EmailConfirmed = true,
                     IsActive = true
                 };
-                superAdmin.PasswordHash = passwordHasher.Hash(superAdminPassword);
-                var result = await userManager.CreateAsync(superAdmin);
+                var result = await userManager.CreateAsync(superAdmin, superAdminPassword);
 
                 if (result.Succeeded)
                 {

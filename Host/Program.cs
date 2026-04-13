@@ -80,10 +80,9 @@ using (var scope = app.Services.CreateScope())
         var userManager = scopedProvider.GetRequiredService<UserManager<User>>();
         var roleManager = scopedProvider.GetRequiredService<RoleManager<Role>>();
         var configuration = scopedProvider.GetRequiredService<IConfiguration>();
-        var passwordHasher = scopedProvider.GetRequiredService<IPasswordHasher>(); // <-- ADD THIS LINE
 
         // Execute identity seeding 
-        await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration, passwordHasher);
+        await IdentityDataSeeder.SeedAsync(userManager, roleManager, configuration);
 
         // Execute Careers Seeding
         var careersSeeder = scopedProvider.GetRequiredService<CareersDataSeeder>();

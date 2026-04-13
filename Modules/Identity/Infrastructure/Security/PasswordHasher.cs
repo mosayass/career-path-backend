@@ -1,17 +1,20 @@
-﻿using CareerPath.Identity.Core.Contracts;
-using BCrypt.Net;
+﻿using BCrypt.Net;
+using CareerPath.Identity.Core.Contracts;
+using CareerPath.Identity.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace CareerPath.Identity.Infrastructure.Security;
 
-public class PasswordHasher : IPasswordHasher
+public class PasswordHasher : Microsoft.AspNetCore.Identity.IPasswordHasher<User>
 {
-    public string Hash(string password)
+    public string HashPassword(User user, string password)
     {
         return BCrypt.Net.BCrypt.HashPassword(password);
     }
 
-    public bool Verify(string password, string passwordHash)
+    public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
     {
-        return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+        var isValid = BCrypt.Net.BCrypt.Verify(providedPassword, hashedPassword);
+        return isValid ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;
     }
 }
