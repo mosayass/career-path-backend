@@ -1,4 +1,4 @@
-﻿namespace Careerpath.Community.Core.Enums;
+﻿namespace CareerPath.Community.Core.Enums;
 
 public enum TargetType
 {

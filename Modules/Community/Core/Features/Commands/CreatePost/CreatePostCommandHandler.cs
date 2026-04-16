@@ -1,11 +1,10 @@
-﻿using Careerpath.Community.Core.Contracts;
-using Careerpath.Community.Core.Entities;
-using CareerPath.Community.Core.Features.Commands.CreatePost;
+﻿using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Core.Entities;
 using CareerPath.Shared.Responses;
 using MediatR;
  using CareerPath.Shared.Contracts.Profiles;
 
-namespace Careerpath.Community.Core.Features.Commands.CreatePost;
+namespace CareerPath.Community.Core.Features.Commands.CreatePost;
 
 public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, Result<Guid>>
 {

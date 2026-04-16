@@ -1,11 +1,10 @@
-﻿using Careerpath.Community.Core.Contracts;
-using Careerpath.Community.Core.Entities;
-using CareerPath.Community.Core.Features.Commands.AddComment;
+﻿using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Core.Entities;
 using CareerPath.Shared.Contracts.Profiles;
 using CareerPath.Shared.Responses;
 using MediatR;
 
-namespace Careerpath.Community.Core.Features.Commands.AddComment;
+namespace CareerPath.Community.Core.Features.Commands.AddComment;
 
 public class AddCommentCommandHandler : IRequestHandler<AddCommentCommand, Result<Guid>>
 {

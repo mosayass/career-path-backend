@@ -1,6 +1,6 @@
-﻿using Careerpath.Community.Core.Entities;
+﻿using CareerPath.Community.Core.Entities;
 
-namespace Careerpath.Community.Core.Contracts;
+namespace CareerPath.Community.Core.Contracts;
 
 public interface ICommentRepository
 {

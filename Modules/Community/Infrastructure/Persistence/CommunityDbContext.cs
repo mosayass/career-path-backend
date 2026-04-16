@@ -1,8 +1,7 @@
-﻿using Careerpath.Community.Core.Entities;
+﻿using CareerPath.Community.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
-namespace Careerpath.Community.Infrastructure.Data;
+namespace CareerPath.Community.Infrastructure.Persistence;
 
 public class CommunityDbContext : DbContext
 {

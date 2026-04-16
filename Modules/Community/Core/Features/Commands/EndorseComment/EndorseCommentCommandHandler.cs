@@ -1,9 +1,9 @@
-﻿using Careerpath.Community.Core.Contracts;
+﻿using CareerPath.Community.Core.Contracts;
 using CareerPath.Community.Core.Features.Commands.EndorseComment;
 using CareerPath.Shared.Responses;
 using MediatR;
 
-namespace Careerpath.Community.Core.Features.Commands.EndorseComment;
+namespace CareerPath.Community.Core.Features.Commands.EndorseComment;
 
 public class EndorseCommentCommandHandler : IRequestHandler<EndorseCommentCommand, Result<bool>>
 {

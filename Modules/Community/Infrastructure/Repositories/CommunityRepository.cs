@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Careerpath.Community.Core.Contracts;
-using Careerpath.Community.Infrastructure.Data;
+using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Infrastructure.Persistence;
 
-namespace Careerpath.Community.Infrastructure.Repositories;
+namespace CareerPath.Community.Infrastructure.Repositories;
 
 public class CommunityRepository(CommunityDbContext context) : ICommunityRepository
 {

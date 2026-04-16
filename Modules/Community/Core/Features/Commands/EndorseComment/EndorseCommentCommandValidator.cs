@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace CareerPath.Community.Core.Features.Commands.EndorseComment
 {

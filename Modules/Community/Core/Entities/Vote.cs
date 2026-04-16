@@ -1,6 +1,6 @@
-﻿using Careerpath.Community.Core.Enums;
+﻿using CareerPath.Community.Core.Enums;
 
-namespace Careerpath.Community.Core.Entities;
+namespace CareerPath.Community.Core.Entities;
 
 public class Vote
 {
@@ -8,7 +8,7 @@ public class Vote
     public Guid UserId { get; private set; }
     public Guid TargetId { get; private set; }
     public TargetType TargetType { get; private set; }
-    public bool IsUpvote { get; private set; }
+    public bool IsUpvote { get; set; }
 
     // 1. EF Core Constructor
     private Vote() { }

@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CareerPath.Community.Core.Features.Commands.CastVote
+namespace CareerPath.Community.Core.Features.Commands.CastPostVote
 {
-    public class CastVoteCommandValidator : AbstractValidator<CastVoteCommand>
+    public class CastPostVoteCommandValidator : AbstractValidator<CastPostVoteCommand>
     {
-        public CastVoteCommandValidator()
+        public CastPostVoteCommandValidator()
         {
             RuleFor(x => x.UserId).NotEmpty();
             RuleFor(x => x.TargetId).NotEmpty();

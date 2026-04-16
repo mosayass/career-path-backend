@@ -1,4 +1,4 @@
-﻿namespace Careerpath.Community.Core.Entities;
+﻿namespace CareerPath.Community.Core.Entities;
 
 public class CommunityEntity
 {

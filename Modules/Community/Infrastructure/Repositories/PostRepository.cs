@@ -1,9 +1,9 @@
-﻿using Careerpath.Community.Core.Contracts;
-using Careerpath.Community.Core.Entities;
-using Careerpath.Community.Infrastructure.Data;
+﻿using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Core.Entities;
+using CareerPath.Community.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Careerpath.Community.Infrastructure.Repositories;
+namespace CareerPath.Community.Infrastructure.Repositories;
 
 public class PostRepository(CommunityDbContext context) : IPostRepository
 {
@@ -29,5 +29,10 @@ public class PostRepository(CommunityDbContext context) : IPostRepository
         return await _context.Posts
             .AsNoTracking()
             .AnyAsync(p => p.Id == postId && p.CommunityId == communityId, cancellationToken);
+    }
+    public async Task<Post?> GetByIdAsync(Guid postId, CancellationToken cancellationToken)
+    {
+        return await _context.Posts
+            .FirstOrDefaultAsync(p => p.Id == postId, cancellationToken);
     }
 }

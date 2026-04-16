@@ -1,18 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Careerpath.Community.Core.Contracts;
-using Careerpath.Community.Core.Entities;
-using Careerpath.Community.Infrastructure.Data;
+using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Core.Entities;
+using CareerPath.Community.Infrastructure.Persistence;
 
-namespace Careerpath.Community.Infrastructure.Repositories;
+namespace CareerPath.Community.Infrastructure.Repositories;
 
-public class CommentRepository : ICommentRepository
+public class CommentRepository(CommunityDbContext context) : ICommentRepository
 {
-    private readonly CommunityDbContext _context;
-
-    public CommentRepository(CommunityDbContext context)
-    {
-        _context = context;
-    }
+    private readonly CommunityDbContext _context = context;
 
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken)
     {

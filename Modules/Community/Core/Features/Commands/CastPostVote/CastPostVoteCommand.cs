@@ -1,11 +1,11 @@
-﻿using Careerpath.Community.Core.Enums;
+﻿using CareerPath.Community.Core.Enums;
 using CareerPath.Shared.Responses;
 using MediatR;
 
 
-namespace CareerPath.Community.Core.Features.Commands.CastVote
+namespace CareerPath.Community.Core.Features.Commands.CastPostVote
 {
-    public record CastVoteCommand(
+    public record CastPostVoteCommand(
     Guid UserId,
     Guid TargetId,
     TargetType TargetType,
