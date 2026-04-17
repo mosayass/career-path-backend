@@ -6,12 +6,6 @@ using CareerPath.Community.Core.Enums;
 
 namespace CareerPath.Community.Core.Features.Commands.CastPostVote;
 
-/* * FOR THE COMMENT VERSION (CastCommentVoteCommandHandler):
- * 1. Change IPostRepository to ICommentRepository.
- * 2. Fetch the comment using _commentRepository.GetByIdAsync().
- * 3. Change TargetType.Post to TargetType.Comment when instantiating or querying Votes.
- * 4. Update the variables and error messages from "post" to "comment".
- */
 
 public class CastPostVoteCommandHandler : IRequestHandler<CastPostVoteCommand, Result<bool>>
 {

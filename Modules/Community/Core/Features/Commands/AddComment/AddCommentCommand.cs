@@ -1,8 +1,5 @@
 ﻿using CareerPath.Shared.Responses;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CareerPath.Community.Core.Features.Commands.AddComment
 {

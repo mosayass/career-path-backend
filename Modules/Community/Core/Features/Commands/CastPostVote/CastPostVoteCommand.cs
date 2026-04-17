@@ -8,6 +8,5 @@ namespace CareerPath.Community.Core.Features.Commands.CastPostVote
     public record CastPostVoteCommand(
     Guid UserId,
     Guid TargetId,
-    TargetType TargetType,
     bool IsUpvote) : IRequest<Result<bool>>;
 }

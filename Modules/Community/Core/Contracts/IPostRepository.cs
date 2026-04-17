@@ -1,4 +1,4 @@
-﻿using Careerpath.Community.Core.Entities;
+﻿using CareerPath.Community.Core.Entities;
 
 namespace CareerPath.Community.Core.Contracts;
 
