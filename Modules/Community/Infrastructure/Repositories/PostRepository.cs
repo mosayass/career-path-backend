@@ -35,4 +35,17 @@ public class PostRepository(CommunityDbContext context) : IPostRepository
         return await _context.Posts
             .FirstOrDefaultAsync(p => p.Id == postId, cancellationToken);
     }
+    public async Task<int> GetPinnedCountByCommunityAsync(Guid communityId, CancellationToken cancellationToken)
+    {
+        return await _context.Posts
+            .CountAsync(p => p.CommunityId == communityId && p.IsPinned, cancellationToken);
+    }
+
+    public async Task<Post?> GetOldestPinnedPostAsync(Guid communityId, CancellationToken cancellationToken)
+    {
+        return await _context.Posts
+            .Where(p => p.CommunityId == communityId && p.IsPinned)
+            .OrderBy(p => p.CreatedAt) // Oldest first
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }

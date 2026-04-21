@@ -6,7 +6,6 @@ using CareerPath.Community.Core.Enums;
 
 namespace CareerPath.Community.Core.Features.Commands.CastPostVote;
 
-
 public class CastPostVoteCommandHandler : IRequestHandler<CastPostVoteCommand, Result<bool>>
 {
     private readonly IVoteRepository _voteRepository;
@@ -22,37 +21,26 @@ public class CastPostVoteCommandHandler : IRequestHandler<CastPostVoteCommand, R
 
     public async Task<Result<bool>> Handle(CastPostVoteCommand request, CancellationToken cancellationToken)
     {
-        // 1. Fetch the Target Post
-        var post = await _postRepository.GetByIdAsync(request.TargetId, cancellationToken);
+        // 1. Fetch Target Post
+        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
         if (post == null)
         {
-            return Result<bool>.Failure(ErrorType.NotFound, $"Post with ID {request.TargetId} does not exist.");
+            return Result<bool>.Failure(ErrorType.NotFound, $"Post with ID {request.PostId} does not exist.");
         }
 
-        // 2. Check for an Existing Vote
-        var existingVote = await _voteRepository.GetVoteAsync(request.UserId, request.TargetId, TargetType.Post, cancellationToken);
+        // 2. Fetch Existing Vote
+        var existingVote = await _voteRepository.GetVoteAsync(request.UserId, request.PostId, TargetType.Post, cancellationToken);
 
-        // 3. Scenario A: User has never voted on this post
-        if (existingVote == null)
+        // 3. Idempotent Check: If vote exists and matches request, do nothing and return Success
+        if (existingVote != null && existingVote.IsUpvote == request.IsUpvote)
         {
-            var newVote = new Vote(request.UserId, request.TargetId, TargetType.Post, request.IsUpvote);
-            await _voteRepository.AddAsync(newVote, cancellationToken);
-
-            if (request.IsUpvote) post.UpvoteCount++;
-            else post.DownvoteCount++;
+            return Result<bool>.Success(true);
         }
-        // 4. Scenario B: User is toggling their existing vote off
-        else if (existingVote.IsUpvote == request.IsUpvote)
-        {
-            _voteRepository.Delete(existingVote);
 
-            if (request.IsUpvote) post.UpvoteCount--;
-            else post.DownvoteCount--;
-        }
-        // 5. Scenario C: User is switching their vote (Up to Down, or Down to Up)
-        else
+        // 4. Update Logic (Changing mind)
+        if (existingVote != null && existingVote.IsUpvote != request.IsUpvote)
         {
-            existingVote.IsUpvote = request.IsUpvote; // Mutate the vote state
+            existingVote.IsUpvote = request.IsUpvote;
 
             if (request.IsUpvote)
             {
@@ -65,8 +53,23 @@ public class CastPostVoteCommandHandler : IRequestHandler<CastPostVoteCommand, R
                 post.DownvoteCount++;
             }
         }
+        // 5. Add Logic (New vote)
+        else if (existingVote == null)
+        {
+            var newVote = new Vote(request.UserId, request.PostId, TargetType.Post, request.IsUpvote);
+            await _voteRepository.AddAsync(newVote, cancellationToken);
 
-        // 6. Commit Transaction (Updates both Post and Vote tables atomically)
+            if (request.IsUpvote)
+            {
+                post.UpvoteCount++;
+            }
+            else
+            {
+                post.DownvoteCount++;
+            }
+        }
+
+        // 6. Commit Transaction
         await _voteRepository.SaveChangesAsync(cancellationToken);
 
         return Result<bool>.Success(true);

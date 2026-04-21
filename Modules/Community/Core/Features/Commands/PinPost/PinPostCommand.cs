@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using CareerPath.Shared.Responses;
+using MediatR;
 
 namespace CareerPath.Community.Core.Features.Commands.PinPost
 {
     public record PinPostCommand(
-    Guid InstructorId,
+    Guid UserId,
     Guid PostId,
-    Guid CommunityId) : IRequest<bool>;
+    Guid CommunityId) : IRequest<Result<bool>>;
 }

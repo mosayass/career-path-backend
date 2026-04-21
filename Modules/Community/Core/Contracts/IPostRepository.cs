@@ -9,4 +9,6 @@ public interface IPostRepository
     Task<bool> ExistsAsync(Guid postId, CancellationToken cancellationToken);
     Task<bool> BelongsToCommunityAsync(Guid postId, Guid communityId, CancellationToken cancellationToken);
     Task<Post?> GetByIdAsync(Guid postId, CancellationToken cancellationToken);
+    Task<int> GetPinnedCountByCommunityAsync(Guid communityId, CancellationToken cancellationToken);
+    Task<Post?> GetOldestPinnedPostAsync(Guid communityId, CancellationToken cancellationToken);
 }

@@ -32,6 +32,9 @@ public class CommunityDbContext : DbContext
             // Map List<Guid> to PostgreSQL native UUID array
             b.Property(c => c.InstructorIds)
              .HasColumnType("uuid[]");
+            // Map List<int> to PostgreSQL native integer array
+            b.Property(c => c.MatchedAILabels)
+             .HasColumnType("integer[]");
         });
 
         modelBuilder.Entity<Post>(b =>

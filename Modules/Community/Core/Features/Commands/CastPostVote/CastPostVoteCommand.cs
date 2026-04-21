@@ -1,5 +1,4 @@
-﻿using CareerPath.Community.Core.Enums;
-using CareerPath.Shared.Responses;
+﻿using CareerPath.Shared.Responses;
 using MediatR;
 
 
@@ -7,6 +6,6 @@ namespace CareerPath.Community.Core.Features.Commands.CastPostVote
 {
     public record CastPostVoteCommand(
     Guid UserId,
-    Guid TargetId,
+    Guid PostId,
     bool IsUpvote) : IRequest<Result<bool>>;
 }

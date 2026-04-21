@@ -10,7 +10,7 @@ namespace CareerPath.Community.Core.Features.Commands.CastPostVote
         public CastPostVoteCommandValidator()
         {
             RuleFor(x => x.UserId).NotEmpty();
-            RuleFor(x => x.TargetId).NotEmpty();
+            RuleFor(x => x.PostId).NotEmpty();
         }
     }
 }
