@@ -8,24 +8,24 @@ namespace CareerPath.Community.Core.Features.Commands.EndorseComment;
 public class EndorseCommentCommandHandler : IRequestHandler<EndorseCommentCommand, Result<bool>>
 {
     private readonly ICommentRepository _commentRepository;
-    private readonly ICommunityRepository _communityRepository;
+    private readonly ICommunityMemberRepository _memberRepository;
     private readonly IPostRepository _postRepository;
 
     public EndorseCommentCommandHandler(
         ICommentRepository commentRepository,
-        ICommunityRepository communityRepository,
+        ICommunityMemberRepository memberRepository,
         IPostRepository postRepository)
     {
         _commentRepository = commentRepository;
-        _communityRepository = communityRepository;
+        _memberRepository = memberRepository;
         _postRepository = postRepository;
     }
 
     public async Task<Result<bool>> Handle(EndorseCommentCommand request, CancellationToken cancellationToken)
     {
         // 1. Validate the Instructor belongs to the Community
-        var isAuthorizedInstructor = await _communityRepository.HasInstructorAsync(request.CommunityId, request.InstructorId, cancellationToken);
-        if (!isAuthorizedInstructor)
+        var isAuthorized = await _memberRepository.IsInstructorAsync(request.CommunityId, request.InstructorId, cancellationToken);
+        if (!isAuthorized)
         {
             return Result<bool>.Failure(ErrorType.Forbidden, "You are not an assigned instructor for this community.");
         }

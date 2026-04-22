@@ -14,10 +14,4 @@ public class CommunityRepository(CommunityDbContext context) : ICommunityReposit
             .AsNoTracking()
             .AnyAsync(c => c.Id == communityId, cancellationToken);
     }
-    public async Task<bool> HasInstructorAsync(Guid communityId, Guid instructorId, CancellationToken cancellationToken)
-    {
-        return await _context.Communities
-            .AsNoTracking()
-            .AnyAsync(c => c.Id == communityId && c.InstructorIds.Contains(instructorId), cancellationToken);
-    }
 }

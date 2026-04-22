@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareerPath.Community.Infrastructure.Persistence;
 
-public class CommunityDbContext : DbContext
+public class CommunityDbContext(DbContextOptions<CommunityDbContext> options) : DbContext(options)
 {
     public DbSet<CommunityEntity> Communities { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Vote> Votes { get; set; }
     public DbSet<DirectMessage> DirectMessages { get; set; }
-    public CommunityDbContext(DbContextOptions<CommunityDbContext> options) : base(options) { }
+    public DbSet<CommunityMember> CommunityMembers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,9 +29,6 @@ public class CommunityDbContext : DbContext
             // Map List<string> to PostgreSQL native string array
             b.Property(c => c.MatchedCareers)
              .HasColumnType("text[]");
-            // Map List<Guid> to PostgreSQL native UUID array
-            b.Property(c => c.InstructorIds)
-             .HasColumnType("uuid[]");
             // Map List<int> to PostgreSQL native integer array
             b.Property(c => c.MatchedAILabels)
              .HasColumnType("integer[]");
@@ -77,6 +74,16 @@ public class CommunityDbContext : DbContext
         {
             b.HasKey(m => m.Id);
             b.Property(m => m.Content).IsRequired().HasMaxLength(2000);
+        });
+        modelBuilder.Entity<CommunityMember>(b =>
+        {
+            b.HasKey(cm => cm.Id);
+
+            // Ensure a user can only join a specific community once
+            b.HasIndex(cm => new { cm.UserId, cm.CommunityId }).IsUnique();
+
+            b.Property(cm => cm.Role).IsRequired();
+            b.Property(cm => cm.IsBanned).HasDefaultValue(false);
         });
     }
 }

@@ -12,7 +12,9 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Persistence\SeedData\" />
+	  <None Update="Persistence\SeedData\CommunitiesSeed.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<PropertyGroup>

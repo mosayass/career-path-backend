@@ -7,20 +7,20 @@ namespace CareerPath.Community.Core.Features.Commands.PinPost;
 public class PinPostCommandHandler : IRequestHandler<PinPostCommand, Result<bool>>
 {
     private readonly IPostRepository _postRepository;
-    private readonly ICommunityRepository _communityRepository;
+    private readonly ICommunityMemberRepository _memberRepository;
 
     public PinPostCommandHandler(
         IPostRepository postRepository,
-        ICommunityRepository communityRepository)
+        ICommunityMemberRepository memberRepository)
     {
         _postRepository = postRepository;
-        _communityRepository = communityRepository;
+        _memberRepository = memberRepository;
     }
 
     public async Task<Result<bool>> Handle(PinPostCommand request, CancellationToken cancellationToken)
     {
         // 1. Validate Moderation Rights (using UserId)
-        var isAuthorized = await _communityRepository.HasInstructorAsync(request.CommunityId, request.UserId, cancellationToken);
+        var isAuthorized = await _memberRepository.IsInstructorAsync(request.CommunityId, request.UserId, cancellationToken);
         if (!isAuthorized)
         {
             return Result<bool>.Failure(ErrorType.Forbidden, "You are not an assigned instructor for this community.");
