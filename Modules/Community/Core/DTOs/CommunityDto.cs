@@ -1,5 +1,4 @@
-﻿
-namespace CareerPath.Community.Core.Features.Queries.GetSuggestedCommunities
+﻿namespace CareerPath.Community.Core.DTOs
 {
     public record CommunityDto(
     Guid Id,

@@ -1,4 +1,5 @@
-﻿using CareerPath.Shared.Responses;
+﻿using CareerPath.Community.Core.DTOs;
+using CareerPath.Shared.Responses;
 using MediatR;
 
 namespace CareerPath.Community.Core.Features.Queries.GetSuggestedCommunities
