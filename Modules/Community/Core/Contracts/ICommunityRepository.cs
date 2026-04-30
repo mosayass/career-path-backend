@@ -1,4 +1,6 @@
-﻿namespace CareerPath.Community.Core.Contracts;
+﻿using CareerPath.Community.Core.Entities;
+
+namespace CareerPath.Community.Core.Contracts;
 
 public interface ICommunityRepository
 {

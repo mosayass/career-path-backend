@@ -5,7 +5,7 @@ namespace CareerPath.Community.Core.Contracts;
 
 public interface IVoteRepository
 {
-    Task<Vote?> GetVoteAsync(Guid userId, Guid targetId, TargetType targetType, CancellationToken cancellationToken);
+    Task<Vote?> GetVoteAsync(Guid userId, Guid targetId, TargetType targetType, CancellationToken cancellationToken =default);
     Task AddAsync(Vote vote, CancellationToken cancellationToken);
     void Delete(Vote vote);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

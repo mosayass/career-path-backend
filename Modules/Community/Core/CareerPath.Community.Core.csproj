@@ -10,4 +10,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Shared\CareerPath.Shared\CareerPath.Shared.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+	</ItemGroup>
 </Project>

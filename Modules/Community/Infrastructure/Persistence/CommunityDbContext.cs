@@ -82,6 +82,7 @@ public class CommunityDbContext(DbContextOptions<CommunityDbContext> options) : 
             // Ensure a user can only join a specific community once
             b.HasIndex(cm => new { cm.UserId, cm.CommunityId }).IsUnique();
 
+            b.HasIndex(cm => cm.CommunityId);
             b.Property(cm => cm.Role).IsRequired();
             b.Property(cm => cm.IsBanned).HasDefaultValue(false);
         });

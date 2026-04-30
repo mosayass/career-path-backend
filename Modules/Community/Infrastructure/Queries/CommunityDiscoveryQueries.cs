@@ -23,7 +23,8 @@ public class CommunityDiscoveryQueries(CommunityDbContext context) : ICommunityD
                 c.Name,
                 c.Description,
                 c.MatchedCareers,
-                c.MatchedAILabels.Contains(primaryLabelId) // Dynamically set Primary flag in SQL
+                c.MatchedAILabels.Contains(primaryLabelId), // Dynamically set Primary flag in SQL
+                _context.CommunityMembers.Count(m => m.CommunityId == c.Id)
             ))
             .ToListAsync(cancellationToken);
     }
@@ -44,7 +45,8 @@ public class CommunityDiscoveryQueries(CommunityDbContext context) : ICommunityD
                 c.Name,
                 c.Description,
                 c.MatchedCareers,
-                false // Explicitly false as this is not an AI match query
+                false, // Explicitly false as this is not an AI match query
+                _context.CommunityMembers.Count(m => m.CommunityId == c.Id)
             ))
             .ToListAsync(cancellationToken);
     }
@@ -69,7 +71,8 @@ public class CommunityDiscoveryQueries(CommunityDbContext context) : ICommunityD
                 c.Name,
                 c.Description,
                 c.MatchedCareers,
-                false // Explicitly false as this is a directory search
+                false, // Explicitly false as this is a directory search
+                _context.CommunityMembers.Count(m => m.CommunityId == c.Id)
             ))
             .ToListAsync(cancellationToken);
     }
