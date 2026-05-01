@@ -58,9 +58,9 @@ public class AddCommentCommandHandler : IRequestHandler<AddCommentCommand, Resul
             request.PostId,
             request.ParentCommentId,
             request.UserId,
-            request.Body,
-            authorName,         
-            authorAvatarUrl
+            authorName,
+            authorAvatarUrl,
+            request.Body
         );
 
         // 5. Persist to Database

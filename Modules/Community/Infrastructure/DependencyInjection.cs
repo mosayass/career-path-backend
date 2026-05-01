@@ -35,6 +35,7 @@ public static class DependencyInjection
         // 3. Register Queries (Read Models)
         services.AddScoped<ICommunityFeedQueries, CommunityFeedQueries>();
         services.AddScoped<ICommunityDiscoveryQueries, CommunityDiscoveryQueries>();
+        services.AddScoped<IPostDetailsQueries, PostDetailsQueries>();
 
         // 4. Register the Seeder so the Host can resolve it
         services.AddScoped<CommunityDataSeeder>();

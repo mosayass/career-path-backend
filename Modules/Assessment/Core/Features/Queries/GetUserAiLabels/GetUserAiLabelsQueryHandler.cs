@@ -16,7 +16,7 @@ public class GetUserAiLabelsQueryHandler : IRequestHandler<GetUserAiLabelsQuery,
 
     public async Task<Result<UserAiLabelsDto>> Handle(GetUserAiLabelsQuery request, CancellationToken cancellationToken)
     {
-        var latestSubmission = await _repository.GetSubmissionByIdAsync(request.UserId, cancellationToken);
+        var latestSubmission = await _repository.GetSubmissionByUserIdAsync(request.UserId, cancellationToken);
 
         if (latestSubmission?.Result == null)
         {

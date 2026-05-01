@@ -31,7 +31,7 @@ public class CommunityDataSeeder
                 return;
             }
 
-            var filePath = Path.Combine(AppContext.BaseDirectory, "SeedData", "CommunitiesSeed.json");
+            var filePath = Path.Combine(AppContext.BaseDirectory, "Persistence", "SeedData", "CommunitiesSeed.json");
 
             if (!File.Exists(filePath))
             {

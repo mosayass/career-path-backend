@@ -25,6 +25,13 @@ public class AssessmentRepository(AssessmentsDbContext dbContext) : IAssessmentR
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
+    public async Task<AssessmentSubmission?> GetSubmissionByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.AssessmentSubmissions
+            .AsNoTracking() 
+            .Include(s => s.Result)
+            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
+    }
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
