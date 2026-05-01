@@ -1,0 +1,9 @@
+﻿using CareerPath.Community.Core.DTOs;
+using CareerPath.Shared.Responses;
+using MediatR;
+
+namespace CareerPath.Community.Core.Features.Queries.GetSuggestedCommunities
+{
+    // Retrieves the AI-matched communities for the student
+    public record GetSuggestedCommunitiesQuery(Guid UserId) : IRequest<Result<List<CommunityDto>>>;
+}
