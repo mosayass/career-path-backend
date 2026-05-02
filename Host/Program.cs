@@ -4,6 +4,7 @@ using CareerPath.Careers.Core;
 using CareerPath.Careers.Infrastructure;
 using CareerPath.Careers.Infrastructure.Persistence;
 using CareerPath.Community.Core;
+using CareerPath.Community.Core.Contracts;
 using CareerPath.Community.Infrastructure;
 using CareerPath.Community.Infrastructure.Persistence;
 using CareerPath.Identity.Core;
@@ -99,6 +100,10 @@ using (var scope = app.Services.CreateScope())
         // Execute Community Seeding
         var communitySeeder = scopedProvider.GetRequiredService<CommunityDataSeeder>();
         await communitySeeder.SeedAsync();
+
+        // Initialize CORS rules for Azure Blob Storage to allow frontend uploads
+        var storageService = scopedProvider.GetRequiredService<IStorageService>();
+        await storageService.InitializeCorsRulesAsync(CancellationToken.None);
     }
     catch (Exception ex)
     {

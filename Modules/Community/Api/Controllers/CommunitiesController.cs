@@ -5,11 +5,13 @@ using CareerPath.Community.Core.Features.Queries.GetJoinedCommunities;
 using CareerPath.Community.Core.Features.Queries.GetSuggestedCommunities;
 using CareerPath.Shared.Api.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace CareerPath.Community.Api.Controllers;
 
+[Authorize]
 public class CommunitiesController(ISender sender) : ApiControllerBase(sender)
 {
     [HttpGet("suggested/{userId:guid}")]
