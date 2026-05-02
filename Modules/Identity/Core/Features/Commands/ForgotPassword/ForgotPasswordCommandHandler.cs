@@ -22,7 +22,7 @@ public class ForgotPasswordCommandHandler(
         }
 
         var token = await identityService.GeneratePasswordResetTokenAsync(user);
-        
+       
         // Orchestration: Construct the simulated React frontend link
         var resetLink = $"http://localhost:3000/reset-password?email={user.Email}&token={token}";
         var emailBody = $"You requested a password reset. Click the link below to reset your password:\n\n{resetLink}\n\nIf you did not request this, please ignore this email.";

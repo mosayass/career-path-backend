@@ -1,20 +1,25 @@
 using CareerPath.Assessment.Core;
 using CareerPath.Assessment.Infrastructure;
+using CareerPath.Careers.Core;
+using CareerPath.Careers.Infrastructure;
+using CareerPath.Careers.Infrastructure.Persistence;
+using CareerPath.Community.Core;
+using CareerPath.Community.Core.Contracts;
+using CareerPath.Community.Infrastructure;
+using CareerPath.Community.Infrastructure.Persistence;
 using CareerPath.Identity.Core;
 using CareerPath.Identity.Core.Contracts;
 using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Models;
-using CareerPath.Careers.Core;
-using CareerPath.Careers.Infrastructure;
-using CareerPath.Careers.Infrastructure.Persistence;
 using CareerPath.Profiles.Core;
 using CareerPath.Profiles.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using CareerPath.Assessment.Infrastructure.Persistence;
 using CareerPath.Profiles.Infrastructure.Persistence;
+using CareerPath.Community.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +58,11 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+// Add Community Module Dependencies
+builder.Services.AddCommunityCoreServices();
+builder.Services.AddCommunityInfrastructure(builder.Configuration);
+
 // Add Identity Module Dependencies
 builder.Services.AddIdentityCoreServices();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
@@ -69,6 +79,10 @@ builder.Services.AddProblemDetails();
 //Register the Profiles Module Dependencies
 builder.Services.AddProfilesCore();
 builder.Services.AddProfilesInfrastructure(builder.Configuration);
+
+// Add Community Module Dependencies
+builder.Services.AddCommunityCore();
+builder.Services.AddCommunityInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
@@ -106,12 +120,20 @@ using (var scope = app.Services.CreateScope())
         // Execute Careers Seeding
         var careersSeeder = scopedProvider.GetRequiredService<CareersDataSeeder>();
         await careersSeeder.SeedAsync();
+
+        // Execute Community Seeding
+        var communitySeeder = scopedProvider.GetRequiredService<CommunityDataSeeder>();
+        await communitySeeder.SeedAsync();
+
+        // Initialize CORS rules for Azure Blob Storage to allow frontend uploads
+        var storageService = scopedProvider.GetRequiredService<IStorageService>();
+        await storageService.InitializeCorsRulesAsync(CancellationToken.None);
     }
     catch (Exception ex)
     {
         // Safely catch and log any seeding errors without crashing the whole app
         var logger = scopedProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the Identity database.");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
 

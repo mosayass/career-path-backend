@@ -34,9 +34,19 @@ services:
     networks:
       - ai_shared_network 
 
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --skipApiVersionCheck"
+    ports:
+      - "10000:10000" # Blob storage port
+    volumes:
+      - azurite_data:/data
+    networks:
+      - ai_shared_network
 # Permanent storage for the database
 volumes:
   postgres_data:
+  azurite_data:
 
 # The shared network that FastAPI will also connect to
 networks:
