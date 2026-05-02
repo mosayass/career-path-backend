@@ -4,6 +4,7 @@ using CareerPath.Careers.Core;
 using CareerPath.Careers.Infrastructure;
 using CareerPath.Careers.Infrastructure.Persistence;
 using CareerPath.Community.Core;
+using CareerPath.Community.Core.Contracts;
 using CareerPath.Community.Infrastructure;
 using CareerPath.Community.Infrastructure.Persistence;
 using CareerPath.Identity.Core;
@@ -15,6 +16,10 @@ using CareerPath.Profiles.Core;
 using CareerPath.Profiles.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using CareerPath.Assessment.Infrastructure.Persistence;
+using CareerPath.Profiles.Infrastructure.Persistence;
+using CareerPath.Community.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +59,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Add Community Module Dependencies
+builder.Services.AddCommunityCoreServices();
+builder.Services.AddCommunityInfrastructure(builder.Configuration);
+
 // Add Identity Module Dependencies
 builder.Services.AddIdentityCoreServices();
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
@@ -84,6 +93,22 @@ using (var scope = app.Services.CreateScope())
     var scopedProvider = scope.ServiceProvider;
     try
     {
+        // DELETE On developement 
+        // 1. Apply Migrations for all modules first 
+        // (Replace with your actual DbContext class names for each module)
+        var identityContext = scopedProvider.GetRequiredService<IdentityDbContext>();
+        await identityContext.Database.MigrateAsync();
+
+        var careersContext = scopedProvider.GetRequiredService<CareersDbContext>();
+        await careersContext.Database.MigrateAsync();
+
+        var assessmentContext = scopedProvider.GetRequiredService<AssessmentsDbContext>();
+        await assessmentContext.Database.MigrateAsync();
+
+        var profilesContext = scopedProvider.GetRequiredService<ProfilesDbContext>();
+        await profilesContext.Database.MigrateAsync();
+
+
         // Request the required services from the DI Container
         var userManager = scopedProvider.GetRequiredService<UserManager<User>>();
         var roleManager = scopedProvider.GetRequiredService<RoleManager<Role>>();
@@ -99,6 +124,10 @@ using (var scope = app.Services.CreateScope())
         // Execute Community Seeding
         var communitySeeder = scopedProvider.GetRequiredService<CommunityDataSeeder>();
         await communitySeeder.SeedAsync();
+
+        // Initialize CORS rules for Azure Blob Storage to allow frontend uploads
+        var storageService = scopedProvider.GetRequiredService<IStorageService>();
+        await storageService.InitializeCorsRulesAsync(CancellationToken.None);
     }
     catch (Exception ex)
     {

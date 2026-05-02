@@ -1,17 +1,19 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using CareerPath.Shared.Api.Controllers;
+﻿using CareerPath.Community.Core.Features.Commands.CastPostVote;
 using CareerPath.Community.Core.Features.Commands.CreatePost;
 using CareerPath.Community.Core.Features.Commands.PinPost;
-using CareerPath.Community.Core.Features.Commands.CastPostVote;
 using CareerPath.Community.Core.Features.Commands.RemovePostVote;
 using CareerPath.Community.Core.Features.Queries.GetCommunityPosts;
 using CareerPath.Community.Core.Features.Queries.GetHomeFeed;
 using CareerPath.Community.Core.Features.Queries.GetPostWithComments;
 using CareerPath.Community.Core.Features.Queries.GetUserPostVotes;
+using CareerPath.Shared.Api.Controllers;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace CareerPath.Api.Controllers;
+namespace CareerPath.Community.Api.Controllers;
 
+[Authorize]
 public class PostsController : ApiControllerBase
 {
     public PostsController(ISender sender) : base(sender) { }

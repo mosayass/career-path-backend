@@ -5,10 +5,12 @@ using CareerPath.Community.Core.Features.Commands.RemoveCommentVote;
 using CareerPath.Community.Core.Features.Queries.GetUserCommentVotes;
 using CareerPath.Shared.Api.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CareerPath.Api.Controllers;
+namespace CareerPath.Community.Api.Controllers;
 
+[Authorize]
 public class CommentsController(ISender sender) : ApiControllerBase(sender)
 {
     [HttpPost]
