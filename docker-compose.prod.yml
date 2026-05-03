@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: careerpath-db-prod
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: CareerPathDb
+    ports:
+      - "5432:5432" # Standard Postgres port
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - ai_shared_network
+    restart: unless-stopped
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: careerpath-azurite-prod
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --skipApiVersionCheck"
+    ports:
+      - "10000:10000" 
+    volumes:
+      - azurite_data_prod:/data
+    networks:
+      - ai_shared_network
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Host/Dockerfile
+    container_name: careerpath-api-prod
+    environment:
+      # 1. Core .NET Settings
+      - ASPNETCORE_ENVIRONMENT=Production
+      
+      # 2. Database Connection (Overrides appsettings)
+      - ConnectionStrings__DefaultConnection=Host=careerpath-db-prod;Port=5432;Database=CareerPathDb;Username=${DB_USER:-postgres};Password=${DB_PASSWORD}
+      
+      # 3. Security & Super Admin
+      - SuperAdmin__Email=${SUPERADMIN_EMAIL}
+      - SuperAdmin__Password=${SUPERADMIN_PASSWORD}
+      - JwtOptions__SecretKey=${JWT_SECRET_KEY}
+      
+      # 4. External Services (Routing over the shared network)
+      - AiModelService__BaseUrl=http://fast_inference_api:8000/
+      
+      # 5. Email Settings (SMTP)
+      - EmailSettings__Host=${SMTP_HOST}
+      - EmailSettings__Port=${SMTP_PORT}
+      - EmailSettings__Username=${SMTP_USERNAME}
+      - EmailSettings__Password=${SMTP_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - ai_shared_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data_prod:
+  azurite_data_prod:
+
+networks:
+  ai_shared_network:
+    external: true
+    name: ai_shared_network
