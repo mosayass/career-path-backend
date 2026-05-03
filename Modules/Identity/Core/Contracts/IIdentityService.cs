@@ -1,4 +1,5 @@
 ﻿using CareerPath.Identity.Core.Entities; // Assuming User entity is here
+using CareerPath.Shared.Responses;
 using System.Threading.Tasks;
 
 namespace CareerPath.Identity.Core.Contracts;
@@ -20,4 +21,8 @@ public interface IIdentityService
     Task<bool> CheckPasswordAsync(
         User user,
         string password);
+    Task<Result> ChangeUserRoleAsync(
+        User user,
+        string oldRole,
+        string newRole);
 }

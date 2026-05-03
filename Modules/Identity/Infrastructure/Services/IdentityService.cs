@@ -1,9 +1,9 @@
 ﻿using CareerPath.Identity.Core.Contracts;
 using CareerPath.Identity.Core.Entities;
+using CareerPath.Shared.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CareerPath.Identity.Infrastructure.Services;
 
@@ -46,5 +46,24 @@ public class IdentityService(UserManager<User> userManager) : IIdentityService
         // runs it through your injected BCrypt class behind the scenes, 
         // and returns true or false.
         return await userManager.CheckPasswordAsync(user, password);
+    }
+    // Inside IdentityService.cs in your Infrastructure layer:
+    public async Task<Result> ChangeUserRoleAsync(User user, string oldRole, string newRole)
+    {
+        // Remove the old role
+        var removeResult = await userManager.RemoveFromRoleAsync(user, oldRole);
+        if (!removeResult.Succeeded)
+        {
+            return Result.Failure(ErrorType.Failure, "Failed to remove the current role.");
+        }
+
+        // Add the new role
+        var addResult = await userManager.AddToRoleAsync(user, newRole);
+        if (!addResult.Succeeded)
+        {
+            return Result.Failure(ErrorType.Failure, "Failed to assign the new role.");
+        }
+
+        return Result.Success();
     }
 }

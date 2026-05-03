@@ -1,4 +1,5 @@
 ﻿using CareerPath.Identity.Core.DTOs;
+using CareerPath.Identity.Core.Features.Commands.ChangeRoleToMentor;
 using CareerPath.Identity.Core.Features.Commands.ForgotPassword;
 using CareerPath.Identity.Core.Features.Commands.Register;
 using CareerPath.Identity.Core.Features.Commands.ResetPassword;
@@ -6,6 +7,7 @@ using CareerPath.Identity.Core.Features.Commands.VerifyEmail;
 using CareerPath.Identity.Core.Features.Queries.Login;
 using CareerPath.Shared.Api.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareerPath.Identity.Api.Controllers;
@@ -57,4 +59,14 @@ public class AuthController(ISender sender) : ApiControllerBase(sender)
 
         return HandleResult(result, new { Message = "Password has been successfully reset. You can now log in." });
     }
+    [HttpPost("change-to-mentor")]
+    [Authorize(Roles = "SuperAdmin")]
+    public async Task<IActionResult> ChangeRoleToMentor([FromBody] ChangeRoleToMentorRequestDto request, CancellationToken cancellationToken)
+    {
+        var command = new ChangeRoleToMentorCommand(request.Email);
+        var result = await Sender.Send(command, cancellationToken);
+
+        return HandleResult(result, new { Message = "User role has been successfully updated to Mentor." });
+    }
+    public record ChangeRoleToMentorRequestDto(string Email);
 }
