@@ -8,7 +8,6 @@ using CareerPath.Community.Core.Contracts;
 using CareerPath.Community.Infrastructure;
 using CareerPath.Community.Infrastructure.Persistence;
 using CareerPath.Identity.Core;
-using CareerPath.Identity.Core.Contracts;
 using CareerPath.Identity.Core.Entities;
 using CareerPath.Identity.Infrastructure;
 using CareerPath.Identity.Infrastructure.Persistence;
@@ -19,7 +18,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using CareerPath.Assessment.Infrastructure.Persistence;
 using CareerPath.Profiles.Infrastructure.Persistence;
-using CareerPath.Community.Infrastructure.Persistence;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,9 +58,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Add Community Module Dependencies
-builder.Services.AddCommunityCoreServices();
-builder.Services.AddCommunityInfrastructure(builder.Configuration);
+
 
 // Add Identity Module Dependencies
 builder.Services.AddIdentityCoreServices();
@@ -84,6 +81,20 @@ builder.Services.AddProfilesInfrastructure(builder.Configuration);
 builder.Services.AddCommunityCore();
 builder.Services.AddCommunityInfrastructure(builder.Configuration);
 
+//Add CORS for frontend connection in development
+var developmentCorsPolicy = "_developmentCorsPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: developmentCorsPolicy,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3003")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Required if you are sending cookies or auth headers
+        });
+});
 var app = builder.Build();
 
 // --- 2. EXECUTION PHASE (Data Seeding) ---
@@ -108,6 +119,8 @@ using (var scope = app.Services.CreateScope())
         var profilesContext = scopedProvider.GetRequiredService<ProfilesDbContext>();
         await profilesContext.Database.MigrateAsync();
 
+        var communityContext = scopedProvider.GetRequiredService<CommunityDbContext>();
+        await communityContext.Database.MigrateAsync();
 
         // Request the required services from the DI Container
         var userManager = scopedProvider.GetRequiredService<UserManager<User>>();
@@ -142,6 +155,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(developmentCorsPolicy);
 }
 
 app.UseExceptionHandler();

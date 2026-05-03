@@ -4,5 +4,5 @@ namespace CareerPath.Identity.Core.Contracts;
 
 public interface IJwtProvider
 {
-    string GenerateToken(User user);
+    string GenerateToken(User user, string role);
 }

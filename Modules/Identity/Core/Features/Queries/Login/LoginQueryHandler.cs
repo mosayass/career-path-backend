@@ -52,9 +52,10 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
         {
             return Result<LoginResponseDto>.Failure(ErrorType.Forbidden, "Account is deactivated. Please contact support.");
         }
+        string role = await _userRepository.GetRoleAsync(user.Id, cancellationToken)?? "User";
 
         // 5. Generate the JWT Token
-        string token = _jwtProvider.GenerateToken(user);
+        string token = _jwtProvider.GenerateToken(user,role);
 
         // 6. Return success with the DTO
         var response = new LoginResponseDto(token, user.Email, $"{user.FirstName} {user.LastName}");
