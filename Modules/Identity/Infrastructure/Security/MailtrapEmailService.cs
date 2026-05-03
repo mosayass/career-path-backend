@@ -30,7 +30,7 @@ public class MailtrapEmailService : IEmailService
 
         var mailMessage = new MailMessage
         {
-            From = new MailAddress("noreply@careerpath.com", "CareerPath System"),
+            From = new MailAddress("noreply.cpath@gmail.com", "Career Path Recomendation System"),
             Subject = subject,
             Body = body,
             IsBodyHtml = true
