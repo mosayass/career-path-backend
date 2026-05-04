@@ -8,6 +8,6 @@ namespace CareerPath.Community.Core.Features.Queries.GetCommunityPosts
     public record GetCommunityPostsQuery(
         Guid CommunityId,
         int PageNumber = 1,
-        int PageSize = 20) : IRequest<Result<List<PostDto>>>;
+        int PageSize = 100) : IRequest<Result<List<PostDto>>>;
 }
  
