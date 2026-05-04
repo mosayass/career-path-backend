@@ -74,7 +74,7 @@ public class ProcessOutboxMessagesJob<TDbContext> : BackgroundService
                 _logger.LogError(ex, "Error processing outbox messages for {DbContextContext}", typeof(TDbContext).Name);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(100), stoppingToken);
         }
     }
 }

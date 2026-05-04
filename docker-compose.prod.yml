@@ -53,6 +53,11 @@ services:
       - EmailSettings__Port=${SMTP_PORT}
       - EmailSettings__Username=${SMTP_USERNAME}
       - EmailSettings__Password=${SMTP_PASSWORD}
+     # 6. CORS Origin & ٍStorage URLs
+      - Storage__IsLocalContainer=${PROD_STORAGE_IS_LOCAL}
+      - Storage__CorsAllowedOrigin=${PROD_CORS_ORIGIN}
+      - Storage__InternalStorageUrl=${PROD_INTERNAL_STORAGE_URL}
+      - Storage__ExternalStorageUrl=${PROD_EXTERNAL_STORAGE_URL}
     ports:
       - "8080:8080"
     depends_on:
