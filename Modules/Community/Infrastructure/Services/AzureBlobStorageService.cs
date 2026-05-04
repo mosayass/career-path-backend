@@ -65,20 +65,20 @@ public class AzureBlobStorageService : IStorageService
 
     public async Task InitializeCorsRulesAsync(CancellationToken cancellationToken)
     {
-        // This solves the CORS trap for frontend uploads
         var properties = await _blobServiceClient.GetPropertiesAsync(cancellationToken);
 
         var corsRule = new BlobCorsRule
         {
             MaxAgeInSeconds = 3600,
-            AllowedMethods = "PUT,OPTIONS",
-            AllowedHeaders = "content-type,x-ms-blob-type",
-            ExposedHeaders = "*"
+            // Allow all standard methods
+            AllowedMethods = "GET,PUT,POST,PATCH,DELETE,OPTIONS",
+            // Wildcard headers to stop Azurite from rejecting Caddy's injected headers
+            AllowedHeaders = "*",
+            ExposedHeaders = "*",
+            // Wildcard origins to bypass exact string-matching bugs behind the proxy.
+            // Security is maintained by your SAS tokens, not CORS.
+            AllowedOrigins = "*"
         };
-
-        //FIXED: .Trim() safely removes any hidden \r or trailing spaces injected by Docker/.env
-        var configuredOrigin = _configuration["Storage:CorsAllowedOrigin"]?.Trim();
-        corsRule.AllowedOrigins = string.IsNullOrEmpty(configuredOrigin) ? "*" : configuredOrigin;
 
         properties.Value.Cors.Clear();
         properties.Value.Cors.Add(corsRule);
