@@ -67,17 +67,23 @@ public class AzureBlobStorageService : IStorageService
     {
         var properties = await _blobServiceClient.GetPropertiesAsync(cancellationToken);
 
+        // 1. Strip hidden Docker \r characters
+        var configuredOrigin = _configuration["Storage:CorsAllowedOrigin"]?.Trim();
+
         var corsRule = new BlobCorsRule
         {
             MaxAgeInSeconds = 3600,
-            // Allow all standard methods
-            AllowedMethods = "GET,PUT,POST,PATCH,DELETE,OPTIONS",
-            // Wildcard headers to stop Azurite from rejecting Caddy's injected headers
-            AllowedHeaders = "*",
+
+            // 2. EXPLICIT: No spaces after commas. Azurite string-matching is brutal.
+            AllowedMethods = "GET,PUT,OPTIONS",
+
+            // 3. EXPLICIT: We CANNOT use "*" here. We must spoon-feed Azurite the exact custom headers.
+            AllowedHeaders = "content-type,x-ms-blob-type,accept,origin",
+
             ExposedHeaders = "*",
-            // Wildcard origins to bypass exact string-matching bugs behind the proxy.
-            // Security is maintained by your SAS tokens, not CORS.
-            AllowedOrigins = "*"
+
+            // 4. Injects https://cpath-community-3aw1.vercel.app cleanly
+            AllowedOrigins = string.IsNullOrEmpty(configuredOrigin) ? "*" : configuredOrigin
         };
 
         properties.Value.Cors.Clear();
