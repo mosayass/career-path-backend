@@ -47,14 +47,20 @@ public class AzureBlobStorageService : IStorageService
             var uploadUrl = blobClient.GenerateSasUri(sasBuilder).ToString();
             var finalUrl = blobClient.Uri.ToString();
 
-            var internalUrl = _configuration["Storage:InternalStorageUrl"];
-            var externalUrl = _configuration["Storage:ExternalStorageUrl"];
+            // Safely read the boolean flag
+            var isLocal = _configuration.GetValue<bool>("Storage:IsLocalContainer", false);
 
-            // If an external URL is defined and different from the internal one, translate it.
-            if (!string.IsNullOrWhiteSpace(internalUrl) && !string.IsNullOrWhiteSpace(externalUrl) && internalUrl != externalUrl)
+            // ONLY perform the translation hack if we are running the local Azurite container
+            if (isLocal)
             {
-                uploadUrl = uploadUrl.Replace(internalUrl, externalUrl);
-                finalUrl = finalUrl.Replace(internalUrl, externalUrl);
+                var internalUrl = _configuration["Storage:InternalStorageUrl"];
+                var externalUrl = _configuration["Storage:ExternalStorageUrl"];
+
+                if (!string.IsNullOrWhiteSpace(internalUrl) && !string.IsNullOrWhiteSpace(externalUrl))
+                {
+                    uploadUrl = uploadUrl.Replace(internalUrl, externalUrl);
+                    finalUrl = finalUrl.Replace(internalUrl, externalUrl);
+                }
             }
 
             tickets.Add(new UploadTicketDto(uploadUrl, finalUrl));

@@ -16,18 +16,6 @@ services:
       - ai_shared_network
     restart: unless-stopped
 
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    container_name: careerpath-azurite-prod
-    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --skipApiVersionCheck"
-    ports:
-      - "10000:10000" 
-    volumes:
-      - azurite_data_prod:/data
-    networks:
-      - ai_shared_network
-    restart: unless-stopped
-
   api:
     build:
       context: .
@@ -55,6 +43,7 @@ services:
       - EmailSettings__Password=${SMTP_PASSWORD}
      # 6. CORS Origin & ٍStorage URLs
       - Storage__IsLocalContainer=${PROD_STORAGE_IS_LOCAL}
+      - Storage__ConnectionString=${PROD_AZURE_CONNECTION_STRING} # NEW
       - Storage__CorsAllowedOrigin=${PROD_CORS_ORIGIN}
       - Storage__InternalStorageUrl=${PROD_INTERNAL_STORAGE_URL}
       - Storage__ExternalStorageUrl=${PROD_EXTERNAL_STORAGE_URL}
@@ -83,10 +72,8 @@ services:
       - ai_shared_network
     depends_on:
       - api
-      - azurite
 volumes:
   postgres_data_prod:
-  azurite_data_prod:
   caddy_data:     # Saves your SSL certificates so they don't get lost
   caddy_config:   # Saves Caddy's internal configuration
 networks:

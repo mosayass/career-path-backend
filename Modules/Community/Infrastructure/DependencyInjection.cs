@@ -42,9 +42,13 @@ public static class DependencyInjection
         // 4. Register the Seeder so the Host can resolve it
         services.AddScoped<CommunityDataSeeder>();
 
-        // 5. Register the Azure Blob client (using dev storage connection string)
-        services.AddSingleton(x => new BlobServiceClient("DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"));
-
+        // 5. Register the Azure Blob client dynamically
+        services.AddSingleton(x =>
+        {
+            var configuration = x.GetRequiredService<IConfiguration>();
+            var connectionString = configuration["Storage:ConnectionString"];
+            return new BlobServiceClient(connectionString);
+        });
         // 6. Register our service
         services.AddScoped<IStorageService, AzureBlobStorageService>();
 

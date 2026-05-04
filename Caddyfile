@@ -1,27 +1,5 @@
 cpath-backend.duckdns.org {
-
-    # ── 1. Intercept ALL OPTIONS preflights for Azurite ──────────────────────
-    # Caddy answers 204 immediately. The request NEVER reaches Azurite.
-    @azurite_preflight {
-        method OPTIONS
-        path /devstoreaccount1/*
-    }
-    handle @azurite_preflight {
-        header Access-Control-Allow-Origin  "https://cpath-community-3aw1.vercel.app"
-        header Access-Control-Allow-Methods "GET,PUT,OPTIONS"
-        header Access-Control-Allow-Headers "content-type,x-ms-blob-type,accept,origin,x-ms-date,x-ms-version,x-ms-client-request-id,authorization"
-        header Access-Control-Max-Age       "3600"
-        respond "" 204
-    }
-
-    # ── 2. Proxy actual blob requests, injecting CORS on the response ─────────
-    handle /devstoreaccount1/* {
-        header Access-Control-Allow-Origin   "https://cpath-community-3aw1.vercel.app"
-        header Access-Control-Expose-Headers "x-ms-request-id,x-ms-version,x-ms-lease-status,x-ms-error-code,Content-Length,Date,ETag,Last-Modified"
-        reverse_proxy careerpath-azurite-prod:10000
-    }
-
-    # ── 3. Everything else → .NET API ─────────────────────────────────────────
+    # Route ALL requests strictly to the .NET API
     handle {
         reverse_proxy careerpath-api-prod:8080
     }
