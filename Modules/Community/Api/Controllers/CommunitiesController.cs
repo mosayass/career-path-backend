@@ -31,7 +31,7 @@ public class CommunitiesController(ISender sender) : ApiControllerBase(sender)
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAll([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 100, CancellationToken cancellationToken = default)
     {
         var query = new GetAllCommunitiesQuery(searchTerm, pageNumber, pageSize);
         var result = await Sender.Send(query, cancellationToken);
