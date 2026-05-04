@@ -42,7 +42,7 @@ public class AzureBlobStorageService : IStorageService
                 ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(15),
                 ContentType = request.ContentType
             };
-            sasBuilder.SetPermissions(BlobSasPermissions.Write);
+            sasBuilder.SetPermissions(BlobSasPermissions.Write | BlobSasPermissions.Create);
 
             var uploadUrl = blobClient.GenerateSasUri(sasBuilder).ToString();
             var finalUrl = blobClient.Uri.ToString();
