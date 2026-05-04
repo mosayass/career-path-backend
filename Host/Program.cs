@@ -94,6 +94,20 @@ builder.Services.AddCors(options =>
                   .AllowAnyMethod()
                   .AllowCredentials(); // Required if you are sending cookies or auth headers
         });
+    // Add this new production policy
+    options.AddPolicy(name: "productionCorsPolicy", policy =>
+    {
+        // Pulls the real link dynamically from environment variables
+        var frontendUrl = builder.Configuration["FrontendUrl"];
+
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            policy.WithOrigins(frontendUrl)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
+    });
 });
 var app = builder.Build();
 
@@ -156,6 +170,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors(developmentCorsPolicy);
+}
+else
+{
+    app.UseCors("productionCorsPolicy");
 }
 
 app.UseExceptionHandler();

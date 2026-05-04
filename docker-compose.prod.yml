@@ -58,6 +58,8 @@ services:
       - Storage__CorsAllowedOrigin=${PROD_CORS_ORIGIN}
       - Storage__InternalStorageUrl=${PROD_INTERNAL_STORAGE_URL}
       - Storage__ExternalStorageUrl=${PROD_EXTERNAL_STORAGE_URL}
+      - FrontendUrl=${PROD_FRONTEND_URL}
+
     ports:
       - "8080:8080"
     depends_on:
