@@ -1,0 +1,11 @@
+cpath-backend.duckdns.org {
+    # 1. Route Image/Blob requests to Azurite
+    handle /devstoreaccount1/* {
+        reverse_proxy careerpath-azurite-prod:10000
+    }
+
+    # 2. Route all other requests to the .NET API
+    handle {
+        reverse_proxy careerpath-api-prod:8080
+    }
+}

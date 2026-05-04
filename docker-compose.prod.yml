@@ -61,10 +61,27 @@ services:
       - ai_shared_network
     restart: unless-stopped
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: careerpath-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"    # Standard HTTP port
+      - "443:443"  # Secure HTTPS port
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - ai_shared_network
+    depends_on:
+      - api
+      - azurite
 volumes:
   postgres_data_prod:
   azurite_data_prod:
-
+  caddy_data:     # Saves your SSL certificates so they don't get lost
+  caddy_config:   # Saves Caddy's internal configuration
 networks:
   ai_shared_network:
     external: true
